@@ -4,6 +4,7 @@
 
 #include "opentelemetry/plugin/detail/dynamic_library_handle.h"
 #include "opentelemetry/plugin/detail/tracer_handle.h"
+#include "opentelemetry/trace/link.h"
 #include "opentelemetry/trace/tracer.h"
 #include "opentelemetry/version.h"
 
@@ -35,6 +36,18 @@ public:
                 const trace::KeyValueIterable &attributes) noexcept override
   {
     span_->AddEvent(name, timestamp, attributes);
+  }
+
+  void AddLink(const trace::Link &link) noexcept override { span_->AddLink(link); }
+  void AddLink(const trace::SpanContext &span_context,
+               const trace::KeyValueIterable &attributes) noexcept override
+  {
+    span_->AddLink(span_context, attributes);
+  }
+
+  void AddLink(const trace::SpanContext &span_context) noexcept override
+  {
+    span_->AddLink(span_context);
   }
 
   void SetStatus(trace::CanonicalCode code, nostd::string_view description) noexcept override

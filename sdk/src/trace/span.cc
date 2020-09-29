@@ -62,13 +62,15 @@ Span::Span(std::shared_ptr<Tracer> &&tracer,
            nostd::string_view name,
            const trace_api::KeyValueIterable &attributes,
            const trace_api::StartSpanOptions &options,
-           const trace_api::SpanContext &parent_span_context) noexcept
+           const trace_api::SpanContext &parent_span_context,
+           const nostd::span<std::shared_ptr<trace_api::Link>> &links) noexcept
     : tracer_{std::move(tracer)},
       processor_{processor},
       recordable_{processor_->MakeRecordable()},
       start_steady_time{options.start_steady_time},
       has_ended_{false}
 {
+  (void)options;
   if (recordable_ == nullptr)
   {
     return;
@@ -97,6 +99,11 @@ Span::Span(std::shared_ptr<Tracer> &&tracer,
     recordable_->SetAttribute(key, value);
     return true;
   });
+
+  for (auto &link : links)
+  {
+    recordable_->AddLink(link->GetContext(), link->GetAttributes());
+  }
 
   recordable_->SetStartTime(NowOr(options.start_system_time));
   start_steady_time = NowOr(options.start_steady_time);
@@ -134,6 +141,34 @@ void Span::AddEvent(nostd::string_view name,
   (void)name;
   (void)timestamp;
   (void)attributes;
+}
+
+void Span::AddLink(const trace_api::Link &link) noexcept
+{
+  if (recordable_ == nullptr)
+  {
+    return;
+  }
+  recordable_->AddLink(link.GetContext(), link.GetAttributes());
+}
+
+void Span::AddLink(const trace_api::SpanContext &span_context,
+                   const trace_api::KeyValueIterable &attributes) noexcept
+{
+  if (recordable_ == nullptr)
+  {
+    return;
+  }
+  recordable_->AddLink(span_context, attributes);
+}
+
+void Span::AddLink(const trace_api::SpanContext &span_context) noexcept
+{
+  if (recordable_ == nullptr)
+  {
+    return;
+  }
+  recordable_->AddLink(span_context);
 }
 
 void Span::SetStatus(trace_api::CanonicalCode code, nostd::string_view description) noexcept
