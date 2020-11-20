@@ -1,4 +1,5 @@
-// Please DONOT touch this file.
+
+// Please DONOT touch this file. 
 // Any changes done here would be overwritten by pre-commit git hook
 
 #include "opentelemetry/sdk/version/version.h"
@@ -8,14 +9,15 @@ namespace sdk
 {
 namespace version
 {
-    const int MAJOR_VERSION = ;
-    const int MINOR_VERSION = ;
-    const int PATCH_VERSION = ;
-    const char* PRE_RELEASE = "NONE";
-    const char* BUILD_METADATA = "NONE";
-    const int COUNT_NEW_COMMITS = "}"
-    const char* BRANCH = "version-hook";
-    const char* COMMIT_HASH = "9755c1128ec76c978be38d87cc24d87a80dff387";
-    const char* SHORT_VERSION = "..";
-    const char* FULL_VERSION = "..-release-NONE--version-hook-9755c1128ec76c978be38d87cc24d87a80dff387";
+    const int MAJOR_VERSION = 0;
+    const int MINOR_VERSION = 0;
+    const int PATCH_VERSION = 0;
+    const char* PRE_RELEASE = "";
+    const char* BRANCH = "";
+    const char* COMMIT_HASH = "";
+    const char* SHORT_VERSION = "";
+    const char* FULL_VERSION = "";
+
 }
+}
+OPENTELEMETRY_END_NAMESPACE
