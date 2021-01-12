@@ -31,6 +31,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+
+    - name: setup build env
+      run: |
+        sudo ./ci/setup_cmake.sh
+        sudo ./ci/setup_ci_environment.sh
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
