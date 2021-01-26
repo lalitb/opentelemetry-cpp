@@ -213,6 +213,11 @@ public:
     span_kind_ = span_kind;
   }
 
+  void SetSpanKind(opentelemetry::trace::SpanKind span_kind) noexcept override
+  {
+    span_kind_ = span_kind;
+  }
+
   void SetStartTime(opentelemetry::core::SystemTimestamp start_time) noexcept override
   {
     start_time_ = start_time;
