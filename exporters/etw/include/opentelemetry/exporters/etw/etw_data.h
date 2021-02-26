@@ -17,6 +17,7 @@
 #include "opentelemetry/trace/trace_id.h"
 #include "opentelemetry/trace/tracer_provider.h"
 
+#include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/sdk/trace/exporter.h"
 #include "opentelemetry/sdk/trace/recordable.h"
 #include "opentelemetry/sdk/trace/span_data.h"
@@ -496,6 +497,14 @@ public:
   void SetSpanKind(opentelemetry::trace::SpanKind span_kind) noexcept override
   {
     span_kind_ = span_kind;
+  }
+
+  void SetResourceAttribute(
+      std::string key,
+      const opentelemetry::sdk::common::OwnedAttributeValue &value) noexcept override
+  {
+    UNREFERENCED_PARAMETER(key);
+    UNREFERENCED_PARAMETER(value);
   }
 
   void SetStartTime(opentelemetry::core::SystemTimestamp start_time) noexcept override
