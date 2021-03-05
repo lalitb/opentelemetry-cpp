@@ -73,10 +73,10 @@ jobs:
         path: /tmp/.grpc_build/
         key: ${{ runner.OS }}-grpc-cache-${{ hashFiles('**/grpc/CMakeLists.txt') }}
     - name: build and install grpc
-      if: cmake_otprotocol_test.grpc-cache.output.cache-hit == 'true'
+      if: steps.grpc-cache.output.cache-hit == 'true'
       run: sudo ./ci/setup_grpc.sh install
     - name: install grpc
-      if: cmake_otprotocol_test.grpc-cache.output.cache-hit != 'true'
+      if: steps.grpc-cache.output.cache-hit != 'true'
       run: sudo ./ci/setup_grpc.sh build_and_install
     - name: run tests
       run:  ./ci/do_ci.sh cmake.exporter.otprotocol.test
