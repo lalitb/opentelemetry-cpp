@@ -66,10 +66,20 @@ jobs:
       run: |
         sudo ./ci/setup_cmake.sh
         sudo ./ci/setup_ci_environment.sh
-    - name: run otlp exporter tests
-      run: |
-        sudo ./ci/setup_grpc.sh
-        ./ci/do_ci.sh cmake.exporter.otprotocol.test
+    - name: Cache GRPC build bits
+      id: grpc-cache
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.grpc_build/
+        key: ${{ runner.OS }}-grpc-cache-${{ hashFiles('**/grpc/CMakeLists.txt') }}
+    - name: build and install grpc
+      if: cmake_otprotocol_test.grpc-cache.output.cache-hit == 'true'
+      run: sudo ./ci/setup_grpc.sh install
+    - name: install grpc
+      if: cmake_otprotocol_test.grpc-cache.output.cache-hit != 'true'
+      run: sudo ./ci/setup_grpc.sh build_and_install
+    - name: run tests
+      run:  ./ci/do_ci.sh cmake.exporter.otprotocol.test
 
   plugin_test:
     name: Plugin -> CMake
