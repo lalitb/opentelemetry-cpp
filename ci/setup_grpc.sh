@@ -36,7 +36,6 @@ if [ $setup_type == "build" ] || [ $setup_type == "build_and_install" ];  then
         -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
         ../..
     make -j $(nproc)
-    make install
     popd
     popd
 fi
