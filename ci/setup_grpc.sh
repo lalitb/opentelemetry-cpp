@@ -42,6 +42,7 @@ if [ $setup_type == "build" ] || [ $setup_type == "build_and_install" ];  then
 fi
 if [ $setup_type == "install" ] || [ $setup_type == "build_and_install" ];  then
     pushd $BUILD_DIR
+    cd grpc
     make install
     popd
 fi
