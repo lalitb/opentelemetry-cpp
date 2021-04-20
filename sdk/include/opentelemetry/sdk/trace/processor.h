@@ -61,6 +61,7 @@ public:
    */
   virtual bool Shutdown(
       std::chrono::microseconds timeout = (std::chrono::microseconds::max)()) noexcept = 0;
+
 };
 }  // namespace trace
 }  // namespace sdk

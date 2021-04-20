@@ -2,6 +2,8 @@
 #include "opentelemetry/exporters/memory/in_memory_span_data.h"
 #include "opentelemetry/sdk/trace/exporter.h"
 
+#include<iostream>
+
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace exporter
 {
@@ -39,6 +41,7 @@ public:
   sdk::common::ExportResult Export(
       const nostd::span<std::unique_ptr<sdk::trace::Recordable>> &recordables) noexcept override
   {
+    std::cout << "\nExported\n";
     for (auto &recordable : recordables)
     {
       auto span = std::unique_ptr<sdk::trace::SpanData>(
@@ -47,6 +50,10 @@ public:
       {
         data_->Add(std::move(span));
       }
+    }
+    auto spans = data_->GetSpans();
+    for (auto &span: spans){
+      std::cout << "NAME:" << span->GetName() << " DESCRIPTION:" << span->GetDescription() << "\n";
     }
 
     return sdk::common::ExportResult::kSuccess;

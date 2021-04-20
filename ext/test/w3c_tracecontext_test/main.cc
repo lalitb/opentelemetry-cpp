@@ -38,10 +38,13 @@ void initTracer()
 {
   auto exporter = std::unique_ptr<sdktrace::SpanExporter>(
       new opentelemetry::exporter::trace::OStreamSpanExporter);
-  auto processor = std::shared_ptr<sdktrace::SpanProcessor>(
+  auto processor = std::unique_ptr<sdktrace::SpanProcessor>(
       new sdktrace::SimpleSpanProcessor(std::move(exporter)));
+  std::vector<std::unique_ptr<sdktrace::SpanProcessor>> processors;
+  processors.push_back(std::move(processor));
+  auto context  = std::make_shared<sdktrace::TracerContext>(std::move(processors));
   auto provider = nostd::shared_ptr<opentelemetry::trace::TracerProvider>(
-      new sdktrace::TracerProvider(processor));
+      new sdktrace::TracerProvider(context));
   // Set the global trace provider
   opentelemetry::trace::Provider::SetTracerProvider(provider);
 }

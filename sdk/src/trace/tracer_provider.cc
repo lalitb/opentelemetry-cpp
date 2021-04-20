@@ -5,14 +5,18 @@ namespace sdk
 {
 namespace trace
 {
-TracerProvider::TracerProvider(std::shared_ptr<SpanProcessor> processor,
-                               opentelemetry::sdk::resource::Resource &&resource,
-                               std::shared_ptr<Sampler> sampler) noexcept
-    : processor_{processor},
-      tracer_(new Tracer(std::move(processor), resource, sampler)),
-      sampler_(sampler),
-      resource_(resource)
+TracerProvider::TracerProvider(std::shared_ptr<sdk::trace::TracerContext> context) noexcept
+    : context_{context}, tracer_(new Tracer(context))
 {}
+
+TracerProvider::TracerProvider(std::unique_ptr<SpanProcessor> processor,
+                               opentelemetry::sdk::resource::Resource resource,
+                               std::unique_ptr<Sampler> sampler) noexcept
+{
+  std::vector<std::unique_ptr<SpanProcessor>> processors;
+  processors.push_back(std::move(processor));
+  *this = TracerProvider(std::make_shared<TracerContext>(std::move(processors), resource, std::move(sampler)));
+}
 
 opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> TracerProvider::GetTracer(
     nostd::string_view library_name,
@@ -21,37 +25,24 @@ opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> TracerProvider::G
   return opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer>(tracer_);
 }
 
-void TracerProvider::SetProcessor(std::shared_ptr<SpanProcessor> processor) noexcept
+void TracerProvider::RegisterProcessor(std::unique_ptr<SpanProcessor> processor) noexcept
 {
-  processor_.store(processor);
-
-  auto sdkTracer = static_cast<Tracer *>(tracer_.get());
-  sdkTracer->SetProcessor(processor);
-}
-
-std::shared_ptr<SpanProcessor> TracerProvider::GetProcessor() const noexcept
-{
-  return processor_.load();
-}
-
-std::shared_ptr<Sampler> TracerProvider::GetSampler() const noexcept
-{
-  return sampler_;
+  return context_->RegisterPipeline(std::move(processor));
 }
 
 const opentelemetry::sdk::resource::Resource &TracerProvider::GetResource() const noexcept
 {
-  return resource_;
+  return context_->GetResource();
 }
+
 
 bool TracerProvider::Shutdown() noexcept
 {
-  return GetProcessor()->Shutdown();
-}
+  return context_->Shutdown();}
 
 bool TracerProvider::ForceFlush(std::chrono::microseconds timeout) noexcept
 {
-  return GetProcessor()->ForceFlush(timeout);
+  return context_->ForceFlush(timeout);
 }
 }  // namespace trace
 }  // namespace sdk

@@ -19,6 +19,7 @@ class AtomicUniquePtr
 {
 public:
   AtomicUniquePtr() noexcept {}
+    explicit AtomicUniquePtr(std::unique_ptr<T> &&other) noexcept : ptr_(other.release()) {}
 
   ~AtomicUniquePtr() noexcept { Reset(); }
 

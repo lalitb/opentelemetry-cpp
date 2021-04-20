@@ -177,9 +177,18 @@ protected:
   {
     shared_data   = std::shared_ptr<TracezSharedData>(new TracezSharedData());
     processor     = std::shared_ptr<TracezSpanProcessor>(new TracezSpanProcessor(shared_data));
+
+    std::unique_ptr<SpanProcessor> processor2(new TracezSpanProcessor(shared_data));
+    std::vector<std::unique_ptr<SpanProcessor>> processors;
+    processors.push_back(std::move(processor2));
     auto resource = opentelemetry::sdk::resource::Resource::Create({});
 
-    tracer     = std::shared_ptr<opentelemetry::trace::Tracer>(new Tracer(processor, resource));
+     // Note: we make a *different* processor for the tracercontext. THis is because
+    // all the tests use shared data, and we want to make sure this works correctly.
+    auto context = std::make_shared<TracerContext>(
+        std::move(processors), resource);
+
+    tracer     = std::shared_ptr<opentelemetry::trace::Tracer>(new Tracer(context));
     auto spans = shared_data->GetSpanSnapshot();
     running    = spans.running;
     completed  = std::move(spans.completed);
@@ -206,8 +215,7 @@ protected:
  */
 TEST_F(TracezProcessor, NoSpans)
 {
-  auto recordable = processor->MakeRecordable();
-
+  
   EXPECT_EQ(running.size(), 0);
   EXPECT_EQ(completed.size(), 0);
 }

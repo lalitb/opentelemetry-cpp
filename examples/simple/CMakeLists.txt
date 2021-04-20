@@ -1,4 +1,5 @@
-include_directories(${CMAKE_SOURCE_DIR}/exporters/ostream/include)
+include_directories(${CMAKE_SOURCE_DIR}/exporters/ostream/include 
+                    ${CMAKE_SOURCE_DIR}/exporters/memory/include)
 
 add_library(foo_library foo_library/foo_library.cc)
 target_link_libraries(foo_library opentelemetry_exporter_ostream_span
