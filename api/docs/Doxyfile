@@ -873,9 +873,7 @@ EXCLUDE_PATTERNS       =
 
 EXCLUDE_SYMBOLS        = AttributeType \
                          Context::DataList \
-                         ThreadLocalContextStorage::Stack \
-                         ThreadLocalContextStorage
-
+                         ThreadLocalContextStorage::Stack
 
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
