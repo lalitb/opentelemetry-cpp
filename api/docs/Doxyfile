@@ -791,7 +791,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../include/opentelemetry/baggage \
-                         ../include/opentelemetry/context/propagation \
+                         ../include/opentelemetry/context \
                          ../include/opentelemetry/common \
                          ../include/opentelemetry/nostd/shared_ptr.h \
                          ../include/opentelemetry/nostd/span.h \
