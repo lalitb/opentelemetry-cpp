@@ -790,8 +790,9 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../include/opentelemetry/common \
-                         ../include/opentelemetry/core \
+INPUT                  = ../include/opentelemetry/baggage \
+                         ../include/opentelemetry/context/propagation \
+                         ../include/opentelemetry/common \
                          ../include/opentelemetry/nostd/shared_ptr.h \
                          ../include/opentelemetry/nostd/span.h \
                          ../include/opentelemetry/nostd/string_view.h \
