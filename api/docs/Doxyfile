@@ -843,8 +843,7 @@ EXCLUDE                = ../include/opentelemetry/common/spin_lock_mutex.h \
                          ../include/opentelemetry/common/kv_properties.h \
                          ../include/opentelemetry/common/string_util.h \
                          ../include/opentelemetry/trace/span_context_kv_iterable_view.h \
-                         ../include/opentelemetry/nostd \
-                         opentelemetry::context::Context::DataList
+                         ../include/opentelemetry/nostd
 
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
@@ -852,7 +851,7 @@ EXCLUDE                = ../include/opentelemetry/common/spin_lock_mutex.h \
 # from the input.
 # The default value is: NO.
 
-EXCLUDE_SYMLINKS       = NO
+EXCLUDE_SYMLINKS       = opentelemetry::context::Context::DataList
 
 # If the value of the INPUT tag contains directories, you can use the
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude
