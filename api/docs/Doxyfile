@@ -872,7 +872,9 @@ EXCLUDE_PATTERNS       =
 # exclude all test directories use the pattern */test/*
 
 EXCLUDE_SYMBOLS        = AttributeType \
-                         ThreadLocalContextStorage
+                         Context::DataList \
+                         ThreadLocalContextStorage::Stack
+
 
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
