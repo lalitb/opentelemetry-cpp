@@ -873,7 +873,8 @@ EXCLUDE_PATTERNS       =
 
 EXCLUDE_SYMBOLS        = AttributeType \
                          Context::DataList \
-                         ThreadLocalContextStorage::Stack
+                         ThreadLocalContextStorage::Stack \
+                         ThreadLocalContextStorage
 
 
 
