@@ -851,7 +851,7 @@ EXCLUDE                = ../include/opentelemetry/common/spin_lock_mutex.h \
 # from the input.
 # The default value is: NO.
 
-EXCLUDE_SYMLINKS       = opentelemetry::context::Context::DataList
+EXCLUDE_SYMLINKS       = NO
 
 # If the value of the INPUT tag contains directories, you can use the
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude
@@ -871,7 +871,8 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        = "AttributeType"
+EXCLUDE_SYMBOLS        = "AttributeType" \
+                         opentelemetry::context::Context::DataList
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
