@@ -4,7 +4,9 @@
 #include "opentelemetry/version.h"
 
 OPENTELEMETRY_BEGIN_NAMESPACE
-namespace sdk
+namespace exporter
+{
+namespace ostream
 {
 namespace version
 {
@@ -20,5 +22,6 @@ const char *SHORT_VERSION   = "0.7.0";
 const char *FULL_VERSION    = "0.7.0";
 const char *BUILD_DATE      = "";
 }  // namespace version
-}  // namespace sdk
+}  // namespace ostream
+}  // namespace exporter
 OPENTELEMETRY_END_NAMESPACE

@@ -17,8 +17,8 @@ find_package(CURL)
 if(CURL_FOUND)
   add_definitions(-DWITH_CURL)
 endif()
-add_library(opentelemetry_exporter_zipkin_trace src/zipkin_exporter.cc
-                                                src/recordable.cc)
+add_library(opentelemetry_exporter_zipkin_trace
+            src/zipkin_exporter.cc src/recordable.cc src/version.cc)
 
 target_link_libraries(opentelemetry_exporter_zipkin_trace
                       PUBLIC opentelemetry_trace http_client_curl)

@@ -8,7 +8,7 @@ set(JAEGER_THRIFT_GENCPP_SOURCES
 
 set(JAEGER_EXPORTER_SOURCES
     src/jaeger_exporter.cc src/thrift_sender.cc src/udp_transport.cc
-    src/recordable.cc src/TUDPTransport.cc)
+    src/recordable.cc src/TUDPTransport.cc src/version.cc)
 
 add_library(jaeger_trace_exporter ${JAEGER_EXPORTER_SOURCES}
                                   ${JAEGER_THRIFT_GENCPP_SOURCES})
