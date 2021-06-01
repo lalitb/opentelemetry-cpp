@@ -1,10 +1,13 @@
 // Please DONOT touch this file.
 // Any changes done here would be overwritten during release/build.
 
-#include "opentelemetry/version.h"
+#ifdef ENABLE_LOGS_PREVIEW
+#  include "opentelemetry/version.h"
 
 OPENTELEMETRY_BEGIN_NAMESPACE
-namespace sdk
+namespace exporter
+{
+namespace logs
 {
 namespace version
 {
@@ -20,5 +23,7 @@ const char *SHORT_VERSION   = "0.7.0";
 const char *FULL_VERSION    = "0.7.0";
 const char *BUILD_DATE      = "";
 }  // namespace version
-}  // namespace sdk
+}  // namespace logs
+}  // namespace exporter
 OPENTELEMETRY_END_NAMESPACE
+#endif

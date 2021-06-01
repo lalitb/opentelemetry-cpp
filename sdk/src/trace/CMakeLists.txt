@@ -7,7 +7,8 @@ add_library(
   batch_span_processor.cc
   samplers/parent.cc
   samplers/trace_id_ratio.cc
-  random_id_generator.cc)
+  random_id_generator.cc
+  ../version/version.cc)
 
 set_target_properties(opentelemetry_trace PROPERTIES EXPORT_NAME trace)
 

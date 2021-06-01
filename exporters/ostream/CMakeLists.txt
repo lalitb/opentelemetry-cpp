@@ -1,4 +1,5 @@
-add_library(opentelemetry_exporter_ostream_span src/span_exporter.cc)
+add_library(opentelemetry_exporter_ostream_span src/span_exporter.cc
+                                                src/version.cc)
 
 set_target_properties(opentelemetry_exporter_ostream_span
                       PROPERTIES EXPORT_NAME ostream_span_exporter)
@@ -35,7 +36,8 @@ if(BUILD_TESTING)
 endif() # BUILD_TESTING
 
 if(WITH_METRICS_PREVIEW)
-  add_library(opentelemetry_exporter_ostream_metrics src/metrics_exporter.cc)
+  add_library(opentelemetry_exporter_ostream_metrics src/metrics_exporter.cc
+                                                     src/version.cc)
   set_target_properties(opentelemetry_exporter_ostream_metrics
                         PROPERTIES EXPORT_NAME ostream_metrics_exporter)
   target_include_directories(

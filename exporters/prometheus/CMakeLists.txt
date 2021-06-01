@@ -15,7 +15,7 @@
 find_package(prometheus-cpp CONFIG REQUIRED)
 
 add_library(prometheus_exporter src/prometheus_collector.cc
-                                src/prometheus_exporter_utils.cc)
+                                src/prometheus_exporter_utils.cc src/version.cc)
 
 target_include_directories(
   prometheus_exporter
