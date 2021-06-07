@@ -24,7 +24,7 @@ jobs:
         ./ci/do_ci.sh cmake.test
 
   cmake_gcc_48_test:
-    name: CMake gcc 4.8
+    name: CMake gcc 4.8 (without otlp-exporter)
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -42,6 +42,28 @@ jobs:
       env:
         CC: /usr/bin/gcc-4.8
         CXX: /usr/bin/g++-4.8
+
+  cmake_gcc_5_test:
+    name: CMake gcc 5 (with otlp exporter)
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - name: setup
+      run: |
+        sudo ./ci/setup_ci_environment.sh
+        sudo ./ci/install_gcc5.sh
+    - name: setup cmake
+      run: |
+        sudo CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 ./ci/setup_cmake.sh
+    - name: run otlp tests
+      run: |
+        sudo ./ci/setup_grpc.sh
+        ./ci/do_ci.sh cmake.legacy.otlp.test
+      env:
+        CC: /usr/bin/gcc-5
+        CXX: /usr/bin/g++-5
 
   cmake_test_cxx20:
     name: CMake C++20 test
