@@ -21,6 +21,7 @@ OPENTELEMETRY_BEGIN_NAMESPACE
 namespace trace
 {
 
+class Scope;
 // The key identifies the active span in the current context.
 constexpr char kSpanKey[] = "active_span";
 
@@ -92,9 +93,6 @@ public:
   // Note that Spans should be created using the Tracer class. Please refer to
   // tracer.h for documentation.
   Span() = default;
-
-  // The Span destructor End()s the Span, if it hasn't been ended already.
-  virtual ~Span() = default;
 
   // Not copiable or movable.
   Span(const Span &) = delete;
@@ -183,14 +181,29 @@ public:
   // Returns true if this Span is recording tracing events (e.g. SetAttribute,
   // AddEvent).
   virtual bool IsRecording() const noexcept = 0;
+
+  virtual ~Span();
+
+
+private:
+  friend class Scope;
+  mutable Scope *scope_;
+  void SetScope(Scope *scope) const 
+  {
+    scope_ = scope;
+  }
+
+  void ClearScope() const{
+    scope_ = nullptr;
+  }
 };
 
 template <class SpanType, class TracerType>
-nostd::shared_ptr<trace::Span> to_span_ptr(TracerType *objPtr,
+Span * to_span_ptr(TracerType *objPtr,
                                            nostd::string_view name,
                                            const trace::StartSpanOptions &options)
 {
-  return nostd::shared_ptr<trace::Span>{new (std::nothrow) SpanType{*objPtr, name, options}};
+  return new (std::nothrow) SpanType{*objPtr, name, options};
 }
 
 }  // namespace trace
