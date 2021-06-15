@@ -25,36 +25,42 @@ public:
    * Initialize a new scope.
    * @param span the given span will be set as the currently active span.
    */
-  Scope( const Span *span) noexcept
+  Scope(const nostd::unique_ptr<Span> &span) noexcept
       : token_(context::RuntimeContext::Attach(
-            context::RuntimeContext::GetCurrent().SetValue(kSpanKey, span))),
-        span_(span), isCleanupDone(false)
+            context::RuntimeContext::GetCurrent().SetValue(kSpanKey, span.get()))),
+        span_(span.get()),
+        isCleanupDone(false)
   {
     span_->SetScope(this);
   }
 
-  ~Scope(){
-    if (!isCleanupDone) {
+  ~Scope()
+  {
+    if (!isCleanupDone)
+    {
       span_->ClearScope();
     }
     isCleanupDone = true;
   }
+  Scope(const Scope &) = default;
+  Scope(Scope &&)      = default;
 
 private:
   nostd::unique_ptr<context::Token> token_;
-  const Span * span_;
+  const Span *span_;
   bool isCleanupDone;
 };
 
-  // Span desctructor
-  // remove it from context if it's currently active.
+// Span desctructor
+// remove Span from currently active destructor
 
-  inline trace::Span::~Span() {
-    if (scope_){
-      delete scope_;
-    }
+inline trace::Span::~Span()
+{
+  if (scope_)
+  {
+    delete scope_;
   }
-
+}
 
 }  // namespace trace
 OPENTELEMETRY_END_NAMESPACE

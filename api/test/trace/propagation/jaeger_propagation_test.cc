@@ -141,7 +141,7 @@ TEST(JaegerPropagatorTest, InjectsContext)
   constexpr uint8_t buf_trace[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
   trace::SpanContext span_context{trace::TraceId{buf_trace}, trace::SpanId{buf_span},
                                   trace::TraceFlags{true}, false};
-  nostd::shared_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
+  nostd::unique_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
   trace::Scope scoped_span{sp};
 
   format.Inject(carrier, context::RuntimeContext::GetCurrent());

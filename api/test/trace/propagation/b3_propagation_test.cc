@@ -64,7 +64,7 @@ TEST(B3PropagationTest, ExtractInvalidContext)
   context::Context ctx1 = context::Context{};
   context::Context ctx2 = format.Extract(carrier, ctx1);
   auto ctx2_span        = ctx2.GetValue(trace::kSpanKey);
-  auto span             = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span             = nostd::get<trace::Span *>(ctx2_span);
   EXPECT_EQ(span->GetContext().IsRemote(), false);
 }
 
@@ -75,7 +75,7 @@ TEST(B3PropagationTest, DoNotExtractWithInvalidHex)
   context::Context ctx1 = context::Context{};
   context::Context ctx2 = format.Extract(carrier, ctx1);
   auto ctx2_span        = ctx2.GetValue(trace::kSpanKey);
-  auto span             = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span             = nostd::get<trace::Span *>(ctx2_span);
   EXPECT_EQ(span->GetContext().IsRemote(), false);
 }
 
@@ -88,9 +88,9 @@ TEST(B3PropagationTest, SetRemoteSpan)
   context::Context ctx2 = format.Extract(carrier, ctx1);
 
   auto ctx2_span = ctx2.GetValue(trace::kSpanKey);
-  EXPECT_TRUE(nostd::holds_alternative<nostd::shared_ptr<trace::Span>>(ctx2_span));
+  EXPECT_TRUE(nostd::holds_alternative<trace::Span *>(ctx2_span));
 
-  auto span = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span = nostd::get<trace::Span *>(ctx2_span);
 
   EXPECT_EQ(Hex(span->GetContext().trace_id()), "80f198ee56343ba864fe8b2a57d3eff7");
   EXPECT_EQ(Hex(span->GetContext().span_id()), "e457b5a2e4d86bd1");
@@ -106,9 +106,9 @@ TEST(B3PropagationTest, SetRemoteSpan_TraceIdShort)
   context::Context ctx2 = format.Extract(carrier, ctx1);
 
   auto ctx2_span = ctx2.GetValue(trace::kSpanKey);
-  EXPECT_TRUE(nostd::holds_alternative<nostd::shared_ptr<trace::Span>>(ctx2_span));
+  EXPECT_TRUE(nostd::holds_alternative<trace::Span *>(ctx2_span));
 
-  auto span = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span = nostd::get<trace::Span *>(ctx2_span);
 
   EXPECT_EQ(Hex(span->GetContext().trace_id()), "000000000000000080f198ee56343ba8");
   EXPECT_EQ(Hex(span->GetContext().span_id()), "e457b5a2e4d86bd1");
@@ -124,9 +124,9 @@ TEST(B3PropagationTest, SetRemoteSpan_SingleHeaderNoFlags)
   context::Context ctx2 = format.Extract(carrier, ctx1);
 
   auto ctx2_span = ctx2.GetValue(trace::kSpanKey);
-  EXPECT_TRUE(nostd::holds_alternative<nostd::shared_ptr<trace::Span>>(ctx2_span));
+  EXPECT_TRUE(nostd::holds_alternative<trace::Span *>(ctx2_span));
 
-  auto span = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span = nostd::get<trace::Span *>(ctx2_span);
 
   EXPECT_EQ(Hex(span->GetContext().trace_id()), "80f198ee56343ba864fe8b2a57d3eff7");
   EXPECT_EQ(Hex(span->GetContext().span_id()), "e457b5a2e4d86bd1");
@@ -144,9 +144,9 @@ TEST(B3PropagationTest, SetRemoteSpanMultiHeader)
   context::Context ctx2 = format.Extract(carrier, ctx1);
 
   auto ctx2_span = ctx2.GetValue(trace::kSpanKey);
-  EXPECT_TRUE(nostd::holds_alternative<nostd::shared_ptr<trace::Span>>(ctx2_span));
+  EXPECT_TRUE(nostd::holds_alternative<trace::Span *>(ctx2_span));
 
-  auto span = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span = nostd::get<trace::Span *>(ctx2_span);
 
   EXPECT_EQ(Hex(span->GetContext().trace_id()), "80f198ee56343ba864fe8b2a57d3eff7");
   EXPECT_EQ(Hex(span->GetContext().span_id()), "e457b5a2e4d86bd1");
@@ -161,7 +161,7 @@ TEST(B3PropagationTest, GetCurrentSpan)
   constexpr uint8_t buf_trace[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
   trace::SpanContext span_context{trace::TraceId{buf_trace}, trace::SpanId{buf_span},
                                   trace::TraceFlags{true}, false};
-  nostd::shared_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
+  nostd::unique_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
 
   // Set `sp` as the currently active span, which must be used by `Inject`.
   trace::Scope scoped_span{sp};
@@ -177,7 +177,7 @@ TEST(B3PropagationTest, GetCurrentSpanMultiHeader)
   constexpr uint8_t buf_trace[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
   trace::SpanContext span_context{trace::TraceId{buf_trace}, trace::SpanId{buf_span},
                                   trace::TraceFlags{true}, false};
-  nostd::shared_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
+  nostd::unique_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
 
   // Set `sp` as the currently active span, which must be used by `Inject`.
   trace::Scope scoped_span{sp};

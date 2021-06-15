@@ -17,35 +17,35 @@ namespace context = opentelemetry::context;
 
 TEST(ScopeTest, Construct)
 {
-  nostd::shared_ptr<Span> span(new NoopSpan(nullptr));
+  nostd::unique_ptr<Span> span(new NoopSpan(nullptr));
   Scope scope(span);
 
   context::ContextValue active_span_value = context::RuntimeContext::GetValue(kSpanKey);
-  ASSERT_TRUE(nostd::holds_alternative<nostd::shared_ptr<Span>>(active_span_value));
+  ASSERT_TRUE(nostd::holds_alternative<Span *>(active_span_value));
 
-  auto active_span = nostd::get<nostd::shared_ptr<Span>>(active_span_value);
-  ASSERT_EQ(active_span, span);
+  auto active_span = nostd::get<Span *>(active_span_value);
+  ASSERT_EQ(active_span, span.get());
 }
 
 TEST(ScopeTest, Destruct)
 {
-  nostd::shared_ptr<Span> span(new NoopSpan(nullptr));
+  nostd::unique_ptr<Span> span(new NoopSpan(nullptr));
   Scope scope(span);
 
   {
-    nostd::shared_ptr<Span> span_nested(new NoopSpan(nullptr));
+    nostd::unique_ptr<Span> span_nested(new NoopSpan(nullptr));
     Scope scope_nested(span_nested);
 
     context::ContextValue active_span_value = context::RuntimeContext::GetValue(kSpanKey);
-    ASSERT_TRUE(nostd::holds_alternative<nostd::shared_ptr<Span>>(active_span_value));
+    ASSERT_TRUE(nostd::holds_alternative<Span *>(active_span_value));
 
-    auto active_span = nostd::get<nostd::shared_ptr<Span>>(active_span_value);
-    ASSERT_EQ(active_span, span_nested);
+    auto active_span = nostd::get<Span *>(active_span_value);
+    ASSERT_EQ(active_span, span_nested.get());
   }
 
   context::ContextValue active_span_value = context::RuntimeContext::GetValue(kSpanKey);
-  ASSERT_TRUE(nostd::holds_alternative<nostd::shared_ptr<Span>>(active_span_value));
+  ASSERT_TRUE(nostd::holds_alternative<Span *>(active_span_value));
 
-  auto active_span = nostd::get<nostd::shared_ptr<Span>>(active_span_value);
-  ASSERT_EQ(active_span, span);
+  auto active_span = nostd::get<Span *>(active_span_value);
+  ASSERT_EQ(active_span, span.get());
 }

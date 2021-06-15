@@ -184,26 +184,21 @@ public:
 
   virtual ~Span();
 
-
 private:
   friend class Scope;
   mutable Scope *scope_;
-  void SetScope(Scope *scope) const 
-  {
-    scope_ = scope;
-  }
+  void SetScope(Scope *scope) const { scope_ = scope; }
 
-  void ClearScope() const{
-    scope_ = nullptr;
-  }
+  void ClearScope() const { scope_ = nullptr; }
 };
 
 template <class SpanType, class TracerType>
-Span * to_span_ptr(TracerType *objPtr,
+nostd::unique_ptr<trace::Span> to_span_ptr(TracerType *objPtr,
                                            nostd::string_view name,
                                            const trace::StartSpanOptions &options)
 {
-  return new (std::nothrow) SpanType{*objPtr, name, options};
+  return std::move(
+      nostd::unique_ptr<trace::Span>{new (std::nothrow) SpanType{*objPtr, name, options}});
 }
 
 }  // namespace trace

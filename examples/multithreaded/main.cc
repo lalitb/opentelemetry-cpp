@@ -44,7 +44,7 @@ void run_threads()
   {
     // This shows how one can effectively use Scope objects to correctly
     // parent spans across threads.
-    threads.push_back(std::thread([=] {
+    threads.push_back(std::thread([&thread_span, thread_num] {
       opentelemetry::trace::Scope scope(thread_span);
       auto thread_span =
           get_tracer()->StartSpan(std::string("thread ") + std::to_string(thread_num));

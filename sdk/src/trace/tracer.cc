@@ -21,7 +21,7 @@ Tracer::Tracer(std::shared_ptr<sdk::trace::TracerContext> context,
     : context_{context}, instrumentation_library_{std::move(instrumentation_library)}
 {}
 
-nostd::shared_ptr<trace_api::Span> Tracer::StartSpan(
+nostd::unique_ptr<trace_api::Span> Tracer::StartSpan(
     nostd::string_view name,
     const opentelemetry::common::KeyValueIterable &attributes,
     const trace_api::SpanContextKeyValueIterable &links,
@@ -49,12 +49,8 @@ nostd::shared_ptr<trace_api::Span> Tracer::StartSpan(
 
   if (sampling_result.decision == Decision::DROP)
   {
-    // Don't allocate a no-op span for every DROP decision, but use a static
-    // singleton for this case.
-    static nostd::shared_ptr<trace_api::Span> noop_span(
-        new trace_api::NoopSpan{this->shared_from_this()});
-
-    return noop_span;
+    return std::move(
+        nostd::unique_ptr<trace_api::Span>(new trace_api::NoopSpan{this->shared_from_this()}));
   }
   else
   {
@@ -65,9 +61,9 @@ nostd::shared_ptr<trace_api::Span> Tracer::StartSpan(
                                     : is_parent_span_valid ? parent_context.trace_state()
                                                            : trace_api::TraceState::GetDefault()));
 
-    auto span = nostd::shared_ptr<trace_api::Span>{
+    auto span = nostd::unique_ptr<trace_api::Span>(
         new (std::nothrow) Span{this->shared_from_this(), name, attributes, links, options,
-                                parent_context, std::move(span_context)}};
+                                parent_context, std::move(span_context)});
 
     // if the attributes is not nullptr, add attributes to the span.
     if (sampling_result.attributes)
@@ -78,7 +74,7 @@ nostd::shared_ptr<trace_api::Span> Tracer::StartSpan(
       }
     }
 
-    return span;
+    return std::move(span);
   }
 }
 

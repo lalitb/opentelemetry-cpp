@@ -31,7 +31,7 @@ public:
                   std::unique_ptr<InstrumentationLibrary> instrumentation_library =
                       InstrumentationLibrary::create("")) noexcept;
 
-  nostd::shared_ptr<trace_api::Span> StartSpan(
+  nostd::unique_ptr<trace_api::Span> StartSpan(
       nostd::string_view name,
       const opentelemetry::common::KeyValueIterable &attributes,
       const trace_api::SpanContextKeyValueIterable &links,

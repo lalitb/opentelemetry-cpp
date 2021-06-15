@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "opentelemetry/nostd/shared_ptr.h"
 #include "opentelemetry/nostd/string_view.h"
 #include "opentelemetry/nostd/unique_ptr.h"
 #include "opentelemetry/trace/default_span.h"
@@ -36,12 +35,12 @@ public:
    * Attributes will be processed in order, previous attributes with the same
    * key will be overwritten.
    */
-  virtual Span * StartSpan(nostd::string_view name,
+  virtual nostd::unique_ptr<Span> StartSpan(nostd::string_view name,
                                             const common::KeyValueIterable &attributes,
                                             const SpanContextKeyValueIterable &links,
                                             const StartSpanOptions &options = {}) noexcept = 0;
 
-  Span * StartSpan(nostd::string_view name,
+  nostd::unique_ptr<Span> StartSpan(nostd::string_view name,
                                     const StartSpanOptions &options = {}) noexcept
   {
     return this->StartSpan(name, {}, {}, options);
@@ -49,14 +48,14 @@ public:
 
   template <class T,
             nostd::enable_if_t<common::detail::is_key_value_iterable<T>::value> * = nullptr>
-  Span * StartSpan(nostd::string_view name,
+  nostd::unique_ptr<Span> StartSpan(nostd::string_view name,
                                     const T &attributes,
                                     const StartSpanOptions &options = {}) noexcept
   {
     return this->StartSpan(name, attributes, {}, options);
   }
 
-  Span * StartSpan(nostd::string_view name,
+  nostd::unique_ptr<Span> StartSpan(nostd::string_view name,
                                     const common::KeyValueIterable &attributes,
                                     const StartSpanOptions &options = {}) noexcept
   {
@@ -67,7 +66,7 @@ public:
             class U,
             nostd::enable_if_t<common::detail::is_key_value_iterable<T>::value> * = nullptr,
             nostd::enable_if_t<detail::is_span_context_kv_iterable<U>::value> *   = nullptr>
-  Span * StartSpan(nostd::string_view name,
+  nostd::unique_ptr<Span> StartSpan(nostd::string_view name,
                                     const T &attributes,
                                     const U &links,
                                     const StartSpanOptions &options = {}) noexcept
@@ -76,18 +75,17 @@ public:
                            SpanContextKeyValueIterableView<U>(links), options);
   }
 
-  Span * StartSpan(
+  nostd::unique_ptr<Span> StartSpan(
       nostd::string_view name,
       std::initializer_list<std::pair<nostd::string_view, common::AttributeValue>> attributes,
       const StartSpanOptions &options = {}) noexcept
   {
-
     return this->StartSpan(name, attributes, {}, options);
   }
 
   template <class T,
             nostd::enable_if_t<common::detail::is_key_value_iterable<T>::value> * = nullptr>
-  Span * StartSpan(
+  nostd::unique_ptr<Span> StartSpan(
       nostd::string_view name,
       const T &attributes,
       std::initializer_list<
@@ -106,7 +104,7 @@ public:
 
   template <class T,
             nostd::enable_if_t<common::detail::is_key_value_iterable<T>::value> * = nullptr>
-  Span * StartSpan(
+  nostd::unique_ptr<Span> StartSpan(
       nostd::string_view name,
       std::initializer_list<std::pair<nostd::string_view, common::AttributeValue>> attributes,
       const T &links,
@@ -118,7 +116,7 @@ public:
                            links, options);
   }
 
-  Span * StartSpan(
+  nostd::unique_ptr<Span> StartSpan(
       nostd::string_view name,
       std::initializer_list<std::pair<nostd::string_view, common::AttributeValue>> attributes,
       std::initializer_list<
@@ -143,14 +141,14 @@ public:
    * @param span the span that should be set as the new active span.
    * @return a Scope that controls how long the span will be active.
    */
-  static Scope WithActiveSpan(Span *span) noexcept { return Scope{span}; }
+  static Scope WithActiveSpan(nostd::unique_ptr<Span> &span) noexcept { return Scope{span}; }
 
   /**
    * Get the currently active span.
    * @return the currently active span, or an invalid default span if no span
    * is active.
    */
-  static Span * GetCurrentSpan() noexcept
+  static Span *GetCurrentSpan() noexcept
   {
     context::ContextValue active_span = context::RuntimeContext::GetValue(kSpanKey);
     if (nostd::holds_alternative<Span *>(active_span))

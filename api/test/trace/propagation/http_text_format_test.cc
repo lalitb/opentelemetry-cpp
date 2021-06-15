@@ -96,9 +96,9 @@ TEST(TextMapPropagatorTest, SetRemoteSpan)
   context::Context ctx2 = format.Extract(carrier, ctx1);
 
   auto ctx2_span = ctx2.GetValue(trace::kSpanKey);
-  EXPECT_TRUE(nostd::holds_alternative<nostd::shared_ptr<trace::Span>>(ctx2_span));
+  EXPECT_TRUE(nostd::holds_alternative<trace::Span *>(ctx2_span));
 
-  auto span = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span = nostd::get<trace::Span *>(ctx2_span);
 
   EXPECT_EQ(Hex(span->GetContext().trace_id()), "4bf92f3577b34da6a3ce929d0e0e4736");
   EXPECT_EQ(Hex(span->GetContext().span_id()), "0102030405060708");
@@ -115,7 +115,7 @@ TEST(TextMapPropagatorTest, GetCurrentSpan)
   auto trace_state = trace::TraceState::FromHeader("congo=t61rcWkgMzE");
   trace::SpanContext span_context{trace::TraceId{buf_trace}, trace::SpanId{buf_span},
                                   trace::TraceFlags{true}, false, trace_state};
-  nostd::shared_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
+  nostd::unique_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
 
   // Set `sp` as the currently active span, which must be used by `Inject`.
   trace::Scope scoped_span{sp};

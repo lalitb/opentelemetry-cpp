@@ -69,17 +69,14 @@ class NoopTracer final : public Tracer, public std::enable_shared_from_this<Noop
 {
 public:
   // Tracer
-  nostd::shared_ptr<Span> StartSpan(nostd::string_view /*name*/,
+  nostd::unique_ptr<Span> StartSpan(nostd::string_view /*name*/,
                                     const common::KeyValueIterable & /*attributes*/,
                                     const SpanContextKeyValueIterable & /*links*/,
                                     const StartSpanOptions & /*options*/) noexcept override
   {
-    // Don't allocate a no-op span for every StartSpan call, but use a static
-    // singleton for this case.
-    static nostd::shared_ptr<trace_api::Span> noop_span(
-        new trace_api::NoopSpan{this->shared_from_this()});
 
-    return noop_span;
+    return std::move(nostd::unique_ptr<Span>(new trace_api::NoopSpan{
+        std::dynamic_pointer_cast<trace_api::Tracer>(this->shared_from_this())}));
   }
 
   void ForceFlushWithMicroseconds(uint64_t /*timeout*/) noexcept override {}

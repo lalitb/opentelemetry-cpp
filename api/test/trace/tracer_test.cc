@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-#include "opentelemetry/nostd/shared_ptr.h"
+#include "opentelemetry/nostd/unique_ptr.h"
 #include "opentelemetry/trace/noop.h"
 #include "opentelemetry/trace/scope.h"
 
@@ -14,8 +14,8 @@ namespace context   = opentelemetry::context;
 TEST(TracerTest, GetCurrentSpan)
 {
   std::unique_ptr<trace_api::Tracer> tracer(new trace_api::NoopTracer());
-  nostd::shared_ptr<trace_api::Span> span_first(new trace_api::NoopSpan(nullptr));
-  nostd::shared_ptr<trace_api::Span> span_second(new trace_api::NoopSpan(nullptr));
+  nostd::unique_ptr<trace_api::Span> span_first(new trace_api::NoopSpan(nullptr));
+  nostd::unique_ptr<trace_api::Span> span_second(new trace_api::NoopSpan(nullptr));
 
   auto current = tracer->GetCurrentSpan();
   ASSERT_FALSE(current->GetContext().IsValid());
@@ -23,15 +23,15 @@ TEST(TracerTest, GetCurrentSpan)
   {
     auto scope_first = tracer->WithActiveSpan(span_first);
     current          = tracer->GetCurrentSpan();
-    ASSERT_EQ(current, span_first);
+    ASSERT_EQ(current, span_first.get());
 
     {
       auto scope_second = tracer->WithActiveSpan(span_second);
       current           = tracer->GetCurrentSpan();
-      ASSERT_EQ(current, span_second);
+      ASSERT_EQ(current, span_second.get());
     }
     current = tracer->GetCurrentSpan();
-    ASSERT_EQ(current, span_first);
+    ASSERT_EQ(current, span_first.get());
   }
 
   current = tracer->GetCurrentSpan();

@@ -60,7 +60,7 @@ public:
     std::unique_ptr<context::propagation::TextMapPropagator> b3_propogator(
         new trace::propagation::B3Propagator());
     propogator_list.push_back(std::move(w3c_propogator));
-    propogator_list.push_back(std::move(b3_propogator));
+    // propogator_list.push_back(std::move(b3_propogator));
 
     composite_propagator_ =
         new context::propagation::CompositePropagator(std::move(propogator_list));
@@ -83,9 +83,9 @@ TEST_F(CompositePropagatorTest, Extract)
   context::Context ctx2 = composite_propagator_->Extract(carrier, ctx1);
 
   auto ctx2_span = ctx2.GetValue(trace::kSpanKey);
-  EXPECT_TRUE(nostd::holds_alternative<nostd::shared_ptr<trace::Span>>(ctx2_span));
+  EXPECT_TRUE(nostd::holds_alternative<trace::Span *>(ctx2_span));
 
-  auto span = nostd::get<nostd::shared_ptr<trace::Span>>(ctx2_span);
+  auto span = nostd::get<trace::Span *>(ctx2_span);
 
   // confirm last propagator in composite propagator list (B3 here) wins for same key
   // ("active_span" here).
@@ -102,7 +102,7 @@ TEST_F(CompositePropagatorTest, Inject)
   constexpr uint8_t buf_trace[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
   trace::SpanContext span_context{trace::TraceId{buf_trace}, trace::SpanId{buf_span},
                                   trace::TraceFlags{true}, false};
-  nostd::shared_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
+  nostd::unique_ptr<trace::Span> sp{new trace::DefaultSpan{span_context}};
 
   // Set `sp` as the currently active span, which must be used by `Inject`.
   trace::Scope scoped_span{sp};

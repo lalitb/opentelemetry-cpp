@@ -17,8 +17,8 @@ namespace plugin
 class Span final : public trace::Span
 {
 public:
-  Span(std::shared_ptr<trace::Tracer> &&tracer, nostd::shared_ptr<trace::Span> span) noexcept
-      : tracer_{std::move(tracer)}, span_{span}
+  Span(nostd::shared_ptr<trace::Tracer> &&tracer, nostd::unique_ptr<trace::Span> &&span) noexcept
+      : tracer_{std::move(tracer)}, span_{std::move(span)}
   {}
 
   // trace::Span
@@ -55,8 +55,8 @@ public:
   trace::SpanContext GetContext() const noexcept override { return span_->GetContext(); }
 
 private:
-  std::shared_ptr<trace::Tracer> tracer_;
-  nostd::shared_ptr<trace::Span> span_;
+  nostd::shared_ptr<trace::Tracer> tracer_;
+  nostd::unique_ptr<trace::Span> span_;
 };
 
 class Tracer final : public trace::Tracer, public std::enable_shared_from_this<Tracer>
@@ -68,7 +68,7 @@ public:
   {}
 
   // trace::Tracer
-  nostd::shared_ptr<trace::Span> StartSpan(
+  nostd::unique_ptr<trace::Span> StartSpan(
       nostd::string_view name,
       const common::KeyValueIterable &attributes,
       const trace::SpanContextKeyValueIterable &links,
@@ -77,9 +77,10 @@ public:
     auto span = tracer_handle_->tracer().StartSpan(name, attributes, links, options);
     if (span == nullptr)
     {
-      return nostd::shared_ptr<trace::Span>(nullptr);
+      return nullptr;
     }
-    return nostd::shared_ptr<trace::Span>{new (std::nothrow) Span{this->shared_from_this(), span}};
+    return nostd::unique_ptr<trace::Span>(new (std::nothrow) Span{
+        std::dynamic_pointer_cast<trace::Tracer>(this->shared_from_this()), std::move(span)});
   }
 
   void ForceFlushWithMicroseconds(uint64_t timeout) noexcept override

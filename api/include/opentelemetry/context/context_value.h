@@ -24,6 +24,6 @@ using ContextValue = nostd::variant<nostd::monostate,
                                     double,
                                     nostd::shared_ptr<trace::SpanContext>,
                                     nostd::shared_ptr<baggage::Baggage>,
-                                    trace::Span* >;
+                                    trace::Span *>;
 }  // namespace context
 OPENTELEMETRY_END_NAMESPACE

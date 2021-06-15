@@ -14,7 +14,7 @@ public:
   explicit Tracer(opentelemetry::nostd::string_view output);
 
   // opentelemetry::trace::Tracer
-  opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> StartSpan(
+  opentelemetry::nostd::unique_ptr<opentelemetry::trace::Span> StartSpan(
       opentelemetry::nostd::string_view name,
       const opentelemetry::common::KeyValueIterable & /*attributes*/,
       const opentelemetry::trace::SpanContextKeyValueIterable & /*links*/,
