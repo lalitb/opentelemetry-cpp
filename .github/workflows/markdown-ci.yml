@@ -1,0 +1,43 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: check out code
+      uses: actions/checkout@v2
+
+    - name: install markdownlint-cli
+      run: sudo npm install -g markdownlint-cli
+
+    - name: run markdownlint
+      run: markdownlint .
+
+  misspell:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out code
+      uses: actions/checkout@v2
+    - name: install misspell
+      run: |
+        curl -L -o ./install-misspell.sh https://git.io/misspell
+        sh ./install-misspell.sh
+    - name: run misspell
+      run: ./bin/misspell -error .
+
+  docfx_check:
+    name: DocFX check
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: install docfx
+      run: choco install docfx -y
+    - name: run ./ci/docfx.cmd
+      shell: cmd
+      run: ./ci/docfx.cmd
