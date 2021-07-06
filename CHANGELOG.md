@@ -98,4 +98,4 @@ Increment the:
 
 ### Changed
 
-### Removed
+### Removed and moved
