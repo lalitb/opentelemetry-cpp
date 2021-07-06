@@ -3,13 +3,12 @@ name: CI
 on:
   push:
     branches: [ main ]
-      - '**'
-      - '!**.md'
   pull_request:
     branches: [ main ]
     paths:
       - '**'
       - '!**.md'
+      - '!docs/**'
 
 jobs:
   cmake_test:
