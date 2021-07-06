@@ -3,15 +3,21 @@ name: CI
 on:
   push:
     branches: [ main ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-  
+    paths:
+      - '**'
+      - '!**.md'
+    paths:
+      - '**'
+      - '!docs/**'
+        
   pull_request:
     branches: [ main ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
+    paths:
+      - '**'
+      - '!**.md'
+    paths:
+      - '**'
+      - '!docs/**'
 
 
 jobs:
