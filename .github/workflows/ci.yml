@@ -6,19 +6,11 @@ on:
     paths:
       - '**'
       - '!**.md'
-    paths:
-      - '**'
-      - '!docs/**'
-        
   pull_request:
     branches: [ main ]
     paths:
       - '**'
       - '!**.md'
-    paths:
-      - '**'
-      - '!docs/**'
-
 
 jobs:
   cmake_test:
