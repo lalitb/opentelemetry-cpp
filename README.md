@@ -1,6 +1,5 @@
 # OpenTelemetry C++
 
-
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/cpp-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C01N3AT62SJ)
 [![codecov.io](https://codecov.io/gh/open-telemetry/opentelemetry-cpp/branch/main/graphs/badge.svg?)](https://codecov.io/gh/open-telemetry/opentelemetry-cpp/)
 [![Build
@@ -121,5 +120,3 @@ See the [project
 milestones](https://github.com/open-telemetry/opentelemetry-cpp/milestones) for
 details on upcoming releases. The dates and features described in issues and
 milestones are estimates, and subject to change.
-
-To be removed1
