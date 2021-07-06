@@ -122,4 +122,4 @@ milestones](https://github.com/open-telemetry/opentelemetry-cpp/milestones) for
 details on upcoming releases. The dates and features described in issues and
 milestones are estimates, and subject to change.
 
-To be removed
+To be removed1
