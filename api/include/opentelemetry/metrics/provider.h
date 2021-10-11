@@ -28,23 +28,39 @@ public:
   static nostd::shared_ptr<MeterProvider> GetMeterProvider() noexcept
   {
     std::lock_guard<common::SpinLockMutex> guard(GetLock());
-    return nostd::shared_ptr<MeterProvider>(GetProvider());
+    if (IsGlobalProviderSet())
+      return nostd::shared_ptr<MeterProvider>(GetGlobalProvider());
+    else
+      return nostd::shared_ptr<MeterProvider>(GetProxyProvider());
   }
 
   /**
    * Changes the singleton MeterProvider.
    */
-  static void SetMeterProvider(nostd::shared_ptr<MeterProvider> tp) noexcept
+  static void SetGlobalMeterProvider(nostd::shared_ptr<MeterProvider> tp) noexcept
   {
     std::lock_guard<common::SpinLockMutex> guard(GetLock());
     GetProvider() = tp;
+    IsGlobalProviderSet() = true;
   }
 
+
 private:
-  static nostd::shared_ptr<MeterProvider> &GetProvider() noexcept
+  static nostd::shared_ptr<MeterProvider> &GetGlobalProvider() noexcept
   {
     static nostd::shared_ptr<MeterProvider> provider(new NoopMeterProvider);
     return provider;
+  }
+
+  static nostd::shared_ptr<MeterProvider> &GetProxyProvider() noexcept
+  {
+    static nostd::shared_ptr<MeterProvider> provider(new ProxyMeterProvider());
+    return provider;
+  }
+  static bool &IsGlobalProviderSet() noexcept 
+  {
+    static bool isSet = false;
+    return isSet;
   }
 
   static common::SpinLockMutex &GetLock() noexcept

@@ -283,6 +283,10 @@ public:
                                  nostd::span<SynchronousInstrument<double> *> instruments,
                                  nostd::span<const double> values) noexcept = 0;
 };
+
+class ProxyMeter {
+    
+}
 }  // namespace metrics
 OPENTELEMETRY_END_NAMESPACE
 #endif
