@@ -6,6 +6,9 @@
 #include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/version.h"
 
+#include <memory>
+#include <vector>
+
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace sdk
 {
@@ -28,11 +31,14 @@ public:
    */
   const opentelemetry::sdk::resource::Resource &GetResource() const noexcept;
 
-  /**
-   * Force all active SpanProcessors to flush any buffered spans
-   * within the given timeout.
-   */
-  bool ForceFlush(std::chrono::microseconds timeout = (std::chrono::microseconds::max)()) noexcept;
+  void RegisterMetricReader(std::unique_ptr<std::unique_ptr>)
+
+      /**
+       * Force all active SpanProcessors to flush any buffered spans
+       * within the given timeout.
+       */
+      bool ForceFlush(
+          std::chrono::microseconds timeout = (std::chrono::microseconds::max)()) noexcept;
 
   /**
    * Shutdown the span processor associated with this meter provider.

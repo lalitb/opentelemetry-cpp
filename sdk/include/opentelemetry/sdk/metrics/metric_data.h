@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/version.h"
 
 OPENTELEMETRY_BEGIN_NAMESPACE
@@ -14,12 +13,11 @@ namespace metrics
 /**
  * Recordable defines the interface to represent the data exported
  * as part of aggregating one Instrument.
-*/
+ */
 
 class Recordable
 {
- // TBD
-
+  // TBD
 };
-}
+}  // namespace metrics
 OPENTELEMETRY_END_NAMESPACE

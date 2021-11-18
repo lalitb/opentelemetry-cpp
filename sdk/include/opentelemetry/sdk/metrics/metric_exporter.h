@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/sdk/metrics/metric_data.h"
+#include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/version.h"
 
 OPENTELEMETRY_BEGIN_NAMESPACE
@@ -14,9 +14,9 @@ namespace metrics
 {
 
 /**
- * MetricExporter defines the interface to be used by metrics libraries to 
+ * MetricExporter defines the interface to be used by metrics libraries to
  *  push export metrics to the OpenTelemetry exporters.
-*/
+ */
 
 class MetricExporter
 {
@@ -39,7 +39,6 @@ public:
    */
   virtual bool Shutdown(
       std::chrono::microseconds timeout = std::chrono::microseconds::max()) noexcept = 0;
-
 }
-}
+}  // namespace metrics
 OPENTELEMETRY_END_NAMESPACE

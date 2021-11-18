@@ -14,7 +14,7 @@ namespace metrics
 
 /**
  * MetricReader defines the interface to collect metrics from SDK
-*/
+ */
 
 class MetricReader
 {
@@ -34,7 +34,6 @@ public:
    */
   virtual bool Shutdown(
       std::chrono::microseconds timeout = std::chrono::microseconds::max()) noexcept = 0;
-
-}
-}
+};
+}  // namespace metrics
 OPENTELEMETRY_END_NAMESPACE

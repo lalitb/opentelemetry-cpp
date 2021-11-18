@@ -6,8 +6,8 @@
 #include <memory>
 #include <vector>
 
-#include "opentelemetry/nostd/shared_ptr.h"
 #include "opentelemetry/metrics/meter_provider.h"
+#include "opentelemetry/nostd/shared_ptr.h"
 #include "opentelemetry/sdk/metrics/meter.h"
 #include "opentelemetry/sdk/metrics/meter_context.h"
 #include "opentelemetry/sdk/resource/resource.h"
