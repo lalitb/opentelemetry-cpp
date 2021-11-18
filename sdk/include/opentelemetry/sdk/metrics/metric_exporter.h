@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "opentelemetry/sdk/metrics/metric_data.h"
+#include "opentelemetry/sdk/metrics/recordable.h"
 #include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/version.h"
 
@@ -31,6 +31,11 @@ public:
   virtual sdk::common::ExportResult Export(
       const nostd::span<std::unique_ptr<opentelemetry::sdk::metrics::Recordable>>
           &spans) noexcept = 0;
+
+  /**
+   * Force flush the meter provider.
+   */
+  bool ForceFlush(std::chrono::microseconds timeout = (std::chrono::microseconds::max)()) noexcept;
 
   /**
    * Shut down the metric reader.

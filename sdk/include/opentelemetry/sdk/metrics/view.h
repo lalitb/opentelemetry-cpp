@@ -16,9 +16,6 @@ namespace metrics
  */
 
 class View
-{
-
-  // TBD
-};
+{};
 }  // namespace metrics
 OPENTELEMETRY_END_NAMESPACE
