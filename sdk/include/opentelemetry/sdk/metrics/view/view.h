@@ -19,6 +19,12 @@ class View
 {
 public:
   virtual ~View() = default;
+
+  virtual nostd::string GetName() const noexcept = 0;
+  virtual nostd::string GetDescription() const noxcept = 0;
+  virtual Aggregation& GetAggregation() const noexcept = 0;
+  virtual AttributesProcessor& GetAttributesProcessor() const noxcept = 0; 
+
   // TBD
 };
 }  // namespace metrics
