@@ -14,6 +14,7 @@
 #  include "foo_library/foo_library.h"
 #endif
 
+#include <benchmark/benchmark.h>
 namespace trace     = opentelemetry::trace;
 namespace nostd     = opentelemetry::nostd;
 namespace trace_sdk = opentelemetry::sdk::trace;
@@ -33,30 +34,16 @@ void InitTracer()
   // Set the global trace provider
   trace::Provider::SetTracerProvider(provider);
 }
-}  // namespace
 
-int main(int argc, char *argv[])
+void BM_otlp_test(benchmark::State &state)
 {
-  if (argc > 1)
-  {
-    opts.url = argv[1];
-    if (argc > 2)
-    {
-      std::string debug  = argv[2];
-      opts.console_debug = debug != "" && debug != "0" && debug != "no";
-    }
-
-    if (argc > 3)
-    {
-      std::string binary_mode = argv[3];
-      if (binary_mode.size() >= 3 && binary_mode.substr(0, 3) == "bin")
-      {
-        opts.content_type = otlp::HttpRequestContentType::kBinary;
-      }
-    }
-  }
-  // Removing this line will leave the default noop TracerProvider in place.
   InitTracer();
-
-  foo_library();
+  while (state.KeepRunning())
+  {
+    foo_library();
+  }
 }
+BENCHMARK(BM_otlp_test);
+
+}  // namespace
+BENCHMARK_MAIN();

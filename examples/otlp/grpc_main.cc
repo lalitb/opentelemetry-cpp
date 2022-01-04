@@ -9,11 +9,15 @@
 #include "opentelemetry/sdk/trace/tracer_provider.h"
 #include "opentelemetry/trace/provider.h"
 
+#include <benchmark/benchmark.h>
+
 #ifdef BAZEL_BUILD
 #  include "examples/common/foo_library/foo_library.h"
 #else
 #  include "foo_library/foo_library.h"
 #endif
+
+#include <iostream>
 
 namespace trace     = opentelemetry::trace;
 namespace nostd     = opentelemetry::nostd;
@@ -34,21 +38,15 @@ void InitTracer()
   // Set the global trace provider
   trace::Provider::SetTracerProvider(provider);
 }
-}  // namespace
 
-int main(int argc, char *argv[])
+void BM_otlp_test(benchmark::State &state)
 {
-  if (argc > 1)
-  {
-    opts.endpoint = argv[1];
-    if (argc > 2)
-    {
-      opts.use_ssl_credentials         = true;
-      opts.ssl_credentials_cacert_path = argv[2];
-    }
-  }
-  // Removing this line will leave the default noop TracerProvider in place.
   InitTracer();
-
-  foo_library();
+  while (state.KeepRunning())
+  {
+    foo_library();
+  }
 }
+BENCHMARK(BM_otlp_test);
+}  // namespace
+BENCHMARK_MAIN();
