@@ -1,5 +1,5 @@
 foreach(testname meter_provider_sdk_test view_registry_test aggregation_test
-                 attributes_processor_test)
+                 attributes_hashmap_test attributes_processor_test)
   add_executable(${testname} "${testname}.cc")
   target_link_libraries(
     ${testname} ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}
@@ -12,4 +12,8 @@ endforeach()
 
 add_executable(attributes_processor_benchmark attributes_processor_benchmark.cc)
 target_link_libraries(attributes_processor_benchmark benchmark::benchmark
+                      ${CMAKE_THREAD_LIBS_INIT} opentelemetry_common)
+
+add_executable(attributes_hashmap_benchmark attributes_hashmap_benchmark.cc)
+target_link_libraries(attributes_hashmap_benchmark benchmark::benchmark
                       ${CMAKE_THREAD_LIBS_INIT} opentelemetry_common)

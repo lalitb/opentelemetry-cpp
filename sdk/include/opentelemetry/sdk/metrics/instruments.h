@@ -4,11 +4,16 @@
 #pragma once
 #ifndef ENABLE_METRICS_PREVIEW
 #  include "opentelemetry/nostd/string_view.h"
+#  include "opentelemetry/sdk/common/attribute_utils.h"
+
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace sdk
 {
 namespace metrics
 {
+
+using MetricAttributes = opentelemetry::sdk::common::OrderedAttributeMap;
+
 enum class InstrumentType
 {
   kCounter,
@@ -25,6 +30,15 @@ enum class InstrumentValueType
   kLong,
   kFloat,
   kDouble
+};
+
+enum class AggregationType
+{
+  kDefault,
+  kDrop,
+  kLastValue,
+  kSum,
+  kHistogram
 };
 
 struct InstrumentDescriptor

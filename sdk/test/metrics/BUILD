@@ -76,3 +76,17 @@ otel_cc_benchmark(
         "//sdk/src/metrics",
     ],
 )
+
+otel_cc_benchmark(
+    name = "attributes_hashmap_benchmark",
+    srcs = [
+        "attributes_hashmap_benchmark.cc",
+    ],
+    tags = [
+        "metrics",
+        "test",
+    ],
+    deps = [
+        "//sdk/src/metrics",
+    ],
+)
