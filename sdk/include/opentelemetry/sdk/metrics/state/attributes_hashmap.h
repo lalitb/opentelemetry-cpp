@@ -23,6 +23,11 @@ template <class KeyType, class ValueType, size_t(HashGenerator)(const KeyType &)
 class AttributesHashMap
 {
 public:
+  /**
+   * @return the pointer to value for given key, nullptr if not present.
+   *
+   */
+
   ValueType *Get(const KeyType &attributes) const
   {
     auto hashcode = HashGenerator(attributes);
@@ -35,12 +40,22 @@ public:
     return nullptr;
   }
 
+  /**
+   * @return check if key is present in hash
+   *
+   */
   bool Has(const KeyType &attributes) const
   {
     auto hashcode = HashGenerator(attributes);
     std::lock_guard<opentelemetry::common::SpinLockMutex> guard(GetLock());
     return (value_map_.find(hashcode) == value_map_.end()) ? false : true;
   }
+
+  /**
+   * @return the pointer to value for given key if present.
+   * If not present, it uses the provided callback to generate
+   * value and store in the hash
+   */
 
   ValueType *GetOrSetDefault(const KeyType &attributes,
                              std::function<std::unique_ptr<ValueType>()> value_callback)
@@ -61,6 +76,10 @@ public:
     return value_map_[hashcode].get();
   }
 
+  /**
+   * Set the value for given key, overwriting the value if already present
+   */
+
   void Set(const KeyType &attributes, std::unique_ptr<ValueType> value)
   {
     auto hashcode = HashGenerator(attributes);
@@ -71,6 +90,10 @@ public:
     }
     value_map_[hashcode] = std::move(value);
   }
+
+  /**
+   * Iterate the hash to yield key and value stored in hash.
+   */
 
   bool GetAllEnteries(
       nostd::function_ref<bool(hashcode_t, const KeyType &, ValueType &)> callback) const
@@ -94,6 +117,10 @@ public:
     }
     return true;
   }
+
+  /**
+   * Return the size of hash.
+   */
 
   size_t Size()
   {
