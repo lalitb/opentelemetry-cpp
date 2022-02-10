@@ -32,15 +32,6 @@ enum class InstrumentValueType
   kDouble
 };
 
-enum class AggregationType
-{
-  kDefault,
-  kDrop,
-  kLastValue,
-  kSum,
-  kHistogram
-};
-
 struct InstrumentDescriptor
 {
   std::string name_;
