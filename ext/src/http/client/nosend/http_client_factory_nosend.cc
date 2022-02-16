@@ -10,8 +10,3 @@ std::shared_ptr<http_client::HttpClientSync> http_client::HttpClientFactory::Cre
 {
   return std::make_shared<http_client::nosend::HttpClient>();
 }
-
-std::shared_ptr<http_client::HttpClientSync> http_client::HttpClientFactory::CreateNoSendSync()
-{
-  // return std::make_shared<http_client::nosend::HttpClientSync>();
-}
