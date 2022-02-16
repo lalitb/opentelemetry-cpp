@@ -114,8 +114,11 @@ public:
     return http_request_;
   }
 
-  auto response = std::unique_ptr<Response>(new Response());
-  ..populate response object..callback.OnResponse(response);
+  void SendRequest(EventHandler &callback) noexcept override
+  {
+    auto response = std::unique_ptr<Response>(new Response());
+    callback.OnResponse(response);
+  }
 
   virtual bool CancelSession() noexcept override;
 
