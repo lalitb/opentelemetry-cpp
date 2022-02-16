@@ -6,7 +6,7 @@
 
 namespace http_client = opentelemetry::ext::http::client;
 
-std::shared_ptr<http_client::HttpClientSync> http_client::HttpClientFactory::CreateNoSend()
+std::shared_ptr<http_client::HttpClient> http_client::HttpClientFactory::CreateNoSend()
 {
   return std::make_shared<http_client::nosend::HttpClient>();
 }
