@@ -20,7 +20,7 @@ namespace
 void BM_AttributseHashMap(benchmark::State &state)
 {
 
-  AttributesHashMap hash_map;
+  AttributesHashMap<Aggregation> hash_map;
   std::vector<std::thread> workers;
   std::vector<MetricAttributes> attributes = {{{"k1", "v1"}, {"k2", "v2"}},
                                               {{"k1", "v1"}, {"k2", "v2"}, {"k3", "v3"}}};

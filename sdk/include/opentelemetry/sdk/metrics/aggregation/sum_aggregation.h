@@ -37,6 +37,10 @@ public:
 
   void Aggregate(double value, const PointAttributes &attributes = {}) noexcept override {}
 
+  std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
+  
+  std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;
+
   PointType Collect() noexcept override;
 
 private:
@@ -56,6 +60,10 @@ public:
 
   PointType Collect() noexcept override;
 
+
+  std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
+  
+  std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;
 private:
   opentelemetry::common::SpinLockMutex lock_;
   opentelemetry::common::SystemTimestamp start_epoch_nanos_;

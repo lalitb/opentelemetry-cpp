@@ -7,7 +7,6 @@
 #  include "opentelemetry/nostd/function_ref.h"
 #  include "opentelemetry/sdk/common/attribute_utils.h"
 #  include "opentelemetry/sdk/common/attributemap_hash.h"
-#  include "opentelemetry/sdk/metrics/aggregation/aggregation.h"
 #  include "opentelemetry/sdk/metrics/instruments.h"
 #  include "opentelemetry/version.h"
 
@@ -32,10 +31,11 @@ public:
   }
 };
 
+template <class T>
 class AttributesHashMap
 {
 public:
-  Aggregation *Get(const MetricAttributes &attributes) const
+  T *Get(const MetricAttributes &attributes) const
   {
     std::lock_guard<opentelemetry::common::SpinLockMutex> guard(GetLock());
     auto it = hash_map_.find(attributes);
@@ -61,8 +61,8 @@ public:
    * If not present, it uses the provided callback to generate
    * value and store in the hash
    */
-  Aggregation *GetOrSetDefault(const MetricAttributes &attributes,
-                               std::function<std::unique_ptr<Aggregation>()> aggregation_callback)
+  T *GetOrSetDefault(const MetricAttributes &attributes,
+                               std::function<std::unique_ptr<T>()> callback)
   {
     std::lock_guard<opentelemetry::common::SpinLockMutex> guard(GetLock());
     auto it = hash_map_.find(attributes);
@@ -71,14 +71,14 @@ public:
       return it->second.get();
     }
 
-    hash_map_[attributes] = std::move(aggregation_callback());
+    hash_map_[attributes] = std::move(callback());
     return hash_map_[attributes].get();
   }
 
   /**
    * Set the value for given key, overwriting the value if already present
    */
-  void Set(const MetricAttributes &attributes, std::unique_ptr<Aggregation> value)
+  void Set(const MetricAttributes &attributes, std::unique_ptr<T> value)
   {
     std::lock_guard<opentelemetry::common::SpinLockMutex> guard(GetLock());
     hash_map_[attributes] = std::move(value);
@@ -88,7 +88,7 @@ public:
    * Iterate the hash to yield key and value stored in hash.
    */
   bool GetAllEnteries(
-      nostd::function_ref<bool(const MetricAttributes &, Aggregation &)> callback) const
+      nostd::function_ref<bool(const MetricAttributes &, T &)> callback) const
   {
     std::lock_guard<opentelemetry::common::SpinLockMutex> guard(GetLock());
     for (auto &kv : hash_map_)
@@ -111,7 +111,7 @@ public:
   }
 
 private:
-  std::unordered_map<MetricAttributes, std::unique_ptr<Aggregation>, AttributeHashGenerator>
+  std::unordered_map<MetricAttributes, std::unique_ptr<T>, AttributeHashGenerator>
       hash_map_;
 
   static opentelemetry::common::SpinLockMutex &GetLock() noexcept

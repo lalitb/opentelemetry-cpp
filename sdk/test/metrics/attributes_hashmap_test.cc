@@ -16,7 +16,7 @@ TEST(AttributesHashMap, BasicTests)
 {
 
   // Empty map
-  AttributesHashMap hash_map;
+  AttributesHashMap<Aggregation> hash_map;
   EXPECT_EQ(hash_map.Size(), 0);
   MetricAttributes m1 = {{"k1", "v1"}};
   EXPECT_EQ(hash_map.Get(m1), nullptr);

@@ -30,11 +30,11 @@ public:
                     AttributesProcessor *attributes_processor = new DefaultAttributesProcessor())
       : instrument_descriptor_(instrument_descriptor),
         aggregation_type_{aggregation_type},
-        attributes_hashmap_(new AttributesHashMap()),
+        attributes_hashmap_(new AttributesHashMap<Aggregation>()),
         attributes_processor_{attributes_processor}
   {
     create_default_aggregation_ = [&]() -> std::unique_ptr<Aggregation> {
-      return std::move(this->create_aggregation());
+      return std::move(DefaultAggregation::CreateAggregation(aggregation_type_, instrument_descriptor_));
     };
   }
 
@@ -103,51 +103,9 @@ public:
 private:
   InstrumentDescriptor instrument_descriptor_;
   AggregationType aggregation_type_;
-  std::unique_ptr<AttributesHashMap> attributes_hashmap_;
+  std::unique_ptr<AttributesHashMap<Aggregation>> attributes_hashmap_;
   AttributesProcessor *attributes_processor_;
   std::function<std::unique_ptr<Aggregation>()> create_default_aggregation_;
-
-  std::unique_ptr<Aggregation> create_aggregation()
-  {
-    switch (aggregation_type_)
-    {
-      case AggregationType::kDrop:
-        return std::move(std::unique_ptr<Aggregation>(new DropAggregation()));
-        break;
-      case AggregationType::kHistogram:
-        if (instrument_descriptor_.value_type_ == InstrumentValueType::kLong)
-        {
-          return std::move(std::unique_ptr<Aggregation>(new LongHistogramAggregation()));
-        }
-        else
-        {
-          return std::move(std::unique_ptr<Aggregation>(new DoubleHistogramAggregation()));
-        }
-        break;
-      case AggregationType::kLastValue:
-        if (instrument_descriptor_.value_type_ == InstrumentValueType::kLong)
-        {
-          return std::move(std::unique_ptr<Aggregation>(new LongLastValueAggregation()));
-        }
-        else
-        {
-          return std::move(std::unique_ptr<Aggregation>(new DoubleLastValueAggregation()));
-        }
-        break;
-      case AggregationType::kSum:
-        if (instrument_descriptor_.value_type_ == InstrumentValueType::kLong)
-        {
-          return std::move(std::unique_ptr<Aggregation>(new LongSumAggregation(true)));
-        }
-        else
-        {
-          return std::move(std::unique_ptr<Aggregation>(new DoubleSumAggregation(true)));
-        }
-        break;
-      default:
-        return std::move(DefaultAggregation::CreateAggregation(instrument_descriptor_));
-    }
-  }
 };
 
 }  // namespace metrics

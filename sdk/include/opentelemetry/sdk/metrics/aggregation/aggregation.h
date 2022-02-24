@@ -28,6 +28,10 @@ public:
 
   virtual void Aggregate(double value, const PointAttributes &attributes = {}) noexcept = 0;
 
+  virtual std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept = 0;
+  
+  virtual std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept = 0;
+
   virtual PointType Collect() noexcept = 0;
 };
 
