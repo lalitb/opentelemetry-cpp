@@ -25,9 +25,10 @@ class SyncMetricStorage : public MetricStorage, public WritableMetricStorage
 {
 
 public:
-  SyncMetricStorage(InstrumentDescriptor instrument_descriptor,
-                    const AggregationType aggregation_type,
-                    AttributesProcessor *attributes_processor = new DefaultAttributesProcessor())
+  SyncMetricStorage(
+      InstrumentDescriptor instrument_descriptor,
+      const AggregationType aggregation_type,
+      const AttributesProcessor *attributes_processor = new DefaultAttributesProcessor())
       : instrument_descriptor_(instrument_descriptor),
         aggregation_type_{aggregation_type},
         attributes_hashmap_(new AttributesHashMap<Aggregation>()),
