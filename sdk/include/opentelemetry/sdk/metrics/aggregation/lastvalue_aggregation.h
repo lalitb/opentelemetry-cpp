@@ -22,12 +22,16 @@ public:
 
   void Aggregate(double value, const PointAttributes &attributes = {}) noexcept override {}
 
+  std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
+
+  std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;
+
   PointType Collect() noexcept override;
 
 private:
   opentelemetry::common::SpinLockMutex lock_;
+  opentelemetry::common::SystemTimestamp sample_ts_;
   long value_;
-  bool is_lastvalue_valid_;
 };
 
 class DoubleLastValueAggregation : public Aggregation
@@ -39,12 +43,16 @@ public:
 
   void Aggregate(double value, const PointAttributes &attributes = {}) noexcept override;
 
+  std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
+  
+  std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;
+
   PointType Collect() noexcept override;
 
 private:
   opentelemetry::common::SpinLockMutex lock_;
+  opentelemetry::common::SystemTimestamp sample_ts_;
   double value_;
-  bool is_lastvalue_valid_;
 };
 
 }  // namespace metrics

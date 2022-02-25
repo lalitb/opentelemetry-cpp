@@ -60,7 +60,6 @@ public:
 
   PointType Collect() noexcept override;
 
-
   std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
   
   std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;

@@ -37,6 +37,10 @@ public:
 
   void Aggregate(double value, const PointAttributes &attributes = {}) noexcept override {}
 
+  std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
+  
+  std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;
+
   PointType Collect() noexcept override;
 
 private:
@@ -55,6 +59,10 @@ public:
   void Aggregate(long value, const PointAttributes &attributes = {}) noexcept override {}
 
   void Aggregate(double value, const PointAttributes &attributes = {}) noexcept override;
+
+  std::unique_ptr<Aggregation> Diff(Aggregation& prev, Aggregation& current) noexcept override;
+  
+  std::unique_ptr<Aggregation> Merge(Aggregation &prev, Aggregation& delta) noexcept override;
 
   PointType Collect() noexcept override;
 

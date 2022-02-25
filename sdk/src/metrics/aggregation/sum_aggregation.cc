@@ -38,6 +38,19 @@ PointType LongSumAggregation::Collect() noexcept
   return sum;
 }
 
+std::unique_ptr<Aggregation> LongSumAggregation::Diff(Aggregation& prev, Aggregation& current) noexcept
+{
+  std::unique_ptr<Aggregation> diff_agg(new LongSumAggregation());
+  diff_agg->Aggregate(current.sum_ - prev.sum_);
+
+}
+  
+std::unique_ptr<Aggregation> LongSumAggregation::Merge(Aggregation &prev, Aggregation& delta) noexcept
+{
+  std::unique_ptr<Aggregation> merge_agg(new LongSumAggregation());
+  merge_agg->Aggregate(current.sum_ - prev.sum_);
+}
+
 DoubleSumAggregation::DoubleSumAggregation(bool is_monotonic)
     : InstrumentMonotonicityAwareAggregation(is_monotonic),
       start_epoch_nanos_(opentelemetry::common::SystemTimestamp(std::chrono::system_clock::now())),
@@ -61,6 +74,18 @@ PointType DoubleSumAggregation::Collect() noexcept
     sum_               = 0;
   }
   return sum;
+}
+std::unique_ptr<Aggregation> DoubleSumAggregation::Diff(Aggregation& prev, Aggregation& current) noexcept
+{
+  std::unique_ptr<Aggregation> diff_agg(new DoubleSumAggregation());
+  diff_agg->Aggregate(current.sum_ - prev.sum_);
+
+}
+  
+std::unique_ptr<Aggregation> DoubleSumAggregation::Merge(Aggregation &prev, Aggregation& delta) noexcept
+{
+  std::unique_ptr<Aggregation> merge_agg(new DoubleSumAggregation());
+  merge_agg->Aggregate(current.sum_ - prev.sum_);
 }
 
 }  // namespace metrics
