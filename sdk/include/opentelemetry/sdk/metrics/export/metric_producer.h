@@ -4,6 +4,8 @@
 #pragma once
 #ifndef ENABLE_METRICS_PREVIEW
 #  include "opentelemetry/sdk/metrics/data/metric_data.h"
+#include "opentelemetry/sdk/instrumentationlibrary/instrumentation_library.h"
+# include "opentelemetry/sdk/resource/resource.h"
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace sdk
 {
@@ -27,7 +29,7 @@ public:
    *
    * @return a status of completion of method.
    */
-  virtual bool Collect(nostd::function_ref<bool(MetricData)> callback) noexcept = 0;
+  virtual bool Collect( nostd::function_ref<bool(MetricData &&, const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary &, const opentelemetry::sdk::resource::Resource &resource)> callback) noexcept = 0;
 };
 
 }  // namespace metrics

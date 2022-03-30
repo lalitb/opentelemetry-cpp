@@ -99,13 +99,13 @@ public:
       nostd::string_view unit        = "") noexcept override;
 
   /** Returns the associated instruementation library */
-  const sdk::instrumentationlibrary::InstrumentationLibrary *GetInstrumentationLibrary()
+  const sdk::instrumentationlibrary::InstrumentationLibrary &GetInstrumentationLibrary()
       const noexcept;
 
   /** collect metrics across all the meters **/
   bool Collect(CollectorHandle *collector,
                opentelemetry::common::SystemTimestamp collect_ts,
-               nostd::function_ref<bool(MetricData &)> callback) noexcept;
+               nostd::function_ref<bool(MetricData &&)> callback) noexcept;
 
 private:
   // order of declaration is important here - instrumentation library should destroy after

@@ -45,7 +45,7 @@ nostd::shared_ptr<metrics_api::Meter> MeterProvider::GetMeter(
   for (auto &meter : context_->GetMeters())
   {
     auto meter_lib = meter->GetInstrumentationLibrary();
-    if (meter_lib->equal(name, version, schema_url))
+    if (meter_lib.equal(name, version, schema_url))
     {
       return nostd::shared_ptr<metrics_api::Meter>{meter};
     }

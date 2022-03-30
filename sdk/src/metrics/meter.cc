@@ -64,7 +64,7 @@ nostd::shared_ptr<metrics::ObservableCounter<long>> Meter::CreateLongObservableC
     nostd::string_view unit) noexcept
 {
   return nostd::shared_ptr<metrics::ObservableCounter<long>>{
-      new LongObservableCounter(name, GetInstrumentationLibrary(), callback, description, unit)};
+      new LongObservableCounter(name, callback, description, unit)};
 }
 
 nostd::shared_ptr<metrics::ObservableCounter<double>> Meter::CreateDoubleObservableCounter(
@@ -74,7 +74,7 @@ nostd::shared_ptr<metrics::ObservableCounter<double>> Meter::CreateDoubleObserva
     nostd::string_view unit) noexcept
 {
   return nostd::shared_ptr<metrics::ObservableCounter<double>>{
-      new DoubleObservableCounter(name, GetInstrumentationLibrary(), callback, description, unit)};
+      new DoubleObservableCounter(name, callback, description, unit)};
 }
 
 nostd::shared_ptr<metrics::Histogram<long>> Meter::CreateLongHistogram(
@@ -112,7 +112,7 @@ nostd::shared_ptr<metrics::ObservableGauge<long>> Meter::CreateLongObservableGau
     nostd::string_view unit) noexcept
 {
   return nostd::shared_ptr<metrics::ObservableGauge<long>>{
-      new LongObservableGauge(name, GetInstrumentationLibrary(), callback, description, unit)};
+      new LongObservableGauge(name, callback, description, unit)};
 }
 
 nostd::shared_ptr<metrics::ObservableGauge<double>> Meter::CreateDoubleObservableGauge(
@@ -122,7 +122,7 @@ nostd::shared_ptr<metrics::ObservableGauge<double>> Meter::CreateDoubleObservabl
     nostd::string_view unit) noexcept
 {
   return nostd::shared_ptr<metrics::ObservableGauge<double>>{
-      new DoubleObservableGauge(name, GetInstrumentationLibrary(), callback, description, unit)};
+      new DoubleObservableGauge(name, callback, description, unit)};
 }
 
 nostd::shared_ptr<metrics::UpDownCounter<long>> Meter::CreateLongUpDownCounter(
@@ -160,7 +160,7 @@ nostd::shared_ptr<metrics::ObservableUpDownCounter<long>> Meter::CreateLongObser
     nostd::string_view unit) noexcept
 {
   return nostd::shared_ptr<metrics::ObservableUpDownCounter<long>>{new LongObservableUpDownCounter(
-      name, GetInstrumentationLibrary(), callback, description, unit)};
+      name, callback, description, unit)};
 }
 
 nostd::shared_ptr<metrics::ObservableUpDownCounter<double>>
@@ -170,14 +170,14 @@ Meter::CreateDoubleObservableUpDownCounter(nostd::string_view name,
                                            nostd::string_view unit) noexcept
 {
   return nostd::shared_ptr<metrics::ObservableUpDownCounter<double>>{
-      new DoubleObservableUpDownCounter(name, GetInstrumentationLibrary(), callback, description,
+      new DoubleObservableUpDownCounter(name, callback, description,
                                         unit)};
 }
 
-const sdk::instrumentationlibrary::InstrumentationLibrary *Meter::GetInstrumentationLibrary()
+const sdk::instrumentationlibrary::InstrumentationLibrary &Meter::GetInstrumentationLibrary()
     const noexcept
 {
-  return instrumentation_library_.get();
+  return *instrumentation_library_
 }
 
 std::unique_ptr<WritableMetricStorage> Meter::RegisterMetricStorage(
@@ -213,7 +213,7 @@ std::unique_ptr<WritableMetricStorage> Meter::RegisterMetricStorage(
 /** collect metrics across all the meters **/
 bool Meter::Collect(CollectorHandle *collector,
                     opentelemetry::common::SystemTimestamp collect_ts,
-                    nostd::function_ref<bool(MetricData &)> callback) noexcept
+                    nostd::function_ref<bool(MetricData &&)> callback) noexcept
 {
   std::vector<MetricData> data;
   for (auto &metric_storage : storage_registry_)
@@ -221,10 +221,11 @@ bool Meter::Collect(CollectorHandle *collector,
     // TBD - this needs to be asynchronous
     metric_storage.second->Collect(collector, meter_context_->GetCollectors(),
                                    meter_context_->GetSDKStartTime(), collect_ts,
-                                   [&callback](MetricData &metric_data) {
-                                     callback(metric_data);
+                                   callback,
+                                 /*  [&callback](MetricData &&metric_data) {
+                                     callback(std::move(metric_data));
                                      return true;
-                                   });
+                                   }*/);
   }
   return true;
 }

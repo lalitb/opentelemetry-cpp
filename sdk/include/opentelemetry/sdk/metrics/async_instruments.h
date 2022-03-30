@@ -6,7 +6,6 @@
 #  include "opentelemetry/metrics/async_instruments.h"
 #  include "opentelemetry/metrics/observer_result.h"
 #  include "opentelemetry/nostd/string_view.h"
-#  include "opentelemetry/sdk/instrumentationlibrary/instrumentation_library.h"
 #  include "opentelemetry/sdk/metrics/instruments.h"
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace sdk
@@ -19,13 +18,10 @@ class Asynchronous
 {
 public:
   Asynchronous(nostd::string_view name,
-               const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-                   *instrumentation_library,
                void (*callback)(opentelemetry::metrics::ObserverResult<T> &),
                nostd::string_view description = "",
                nostd::string_view unit        = "")
       : name_(name),
-        instrumentation_library_{instrumentation_library},
         callback_(callback),
         description_(description),
         unit_(unit)
@@ -33,8 +29,6 @@ public:
 
 protected:
   std::string name_;
-  const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-      *instrumentation_library_;
   void (*callback_)(opentelemetry::metrics::ObserverResult<T> &);
   std::string description_;
   std::string unit_;
@@ -45,12 +39,10 @@ class LongObservableCounter : public opentelemetry::metrics::ObservableCounter<l
 {
 public:
   LongObservableCounter(nostd::string_view name,
-                        const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-                            *instrumentation_library,
                         void (*callback)(opentelemetry::metrics::ObserverResult<long> &),
                         nostd::string_view description = "",
                         nostd::string_view unit        = "")
-      : Asynchronous(name, instrumentation_library, callback, description, unit)
+      : Asynchronous(name, callback, description, unit)
 
   {}
 };
@@ -60,12 +52,10 @@ class DoubleObservableCounter : public opentelemetry::metrics::ObservableCounter
 {
 public:
   DoubleObservableCounter(nostd::string_view name,
-                          const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-                              *instrumentation_library,
                           void (*callback)(opentelemetry::metrics::ObserverResult<double> &),
                           nostd::string_view description = "",
                           nostd::string_view unit        = "")
-      : Asynchronous(name, instrumentation_library, callback, description, unit)
+      : Asynchronous(name, callback, description, unit)
 
   {}
 };
@@ -75,12 +65,10 @@ class LongObservableGauge : public opentelemetry::metrics::ObservableGauge<long>
 {
 public:
   LongObservableGauge(nostd::string_view name,
-                      const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-                          *instrumentation_library,
                       void (*callback)(opentelemetry::metrics::ObserverResult<long> &),
                       nostd::string_view description = "",
                       nostd::string_view unit        = "")
-      : Asynchronous(name, instrumentation_library, callback, description, unit)
+      : Asynchronous(name, callback, description, unit)
 
   {}
 };
@@ -90,12 +78,10 @@ class DoubleObservableGauge : public opentelemetry::metrics::ObservableGauge<dou
 {
 public:
   DoubleObservableGauge(nostd::string_view name,
-                        const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-                            *instrumentation_library,
                         void (*callback)(opentelemetry::metrics::ObserverResult<double> &),
                         nostd::string_view description = "",
                         nostd::string_view unit        = "")
-      : Asynchronous(name, instrumentation_library, callback, description, unit)
+      : Asynchronous(name, callback, description, unit)
 
   {}
 };
@@ -106,12 +92,10 @@ class LongObservableUpDownCounter : public opentelemetry::metrics::ObservableUpD
 public:
   LongObservableUpDownCounter(
       nostd::string_view name,
-      const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-          *instrumentation_library,
       void (*callback)(opentelemetry::metrics::ObserverResult<long> &),
       nostd::string_view description = "",
       nostd::string_view unit        = "")
-      : Asynchronous(name, instrumentation_library, callback, description, unit)
+      : Asynchronous(name, callback, description, unit)
 
   {}
 };
@@ -123,12 +107,10 @@ class DoubleObservableUpDownCounter
 public:
   DoubleObservableUpDownCounter(
       nostd::string_view name,
-      const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary
-          *instrumentation_library,
       void (*callback)(opentelemetry::metrics::ObserverResult<double> &),
       nostd::string_view description = "",
       nostd::string_view unit        = "")
-      : Asynchronous(name, instrumentation_library, callback, description, unit)
+      : Asynchronous(name, callback, description, unit)
   {}
 };
 

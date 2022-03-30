@@ -52,7 +52,7 @@ public:
 
 private:
   mutable opentelemetry::common::SpinLockMutex lock_;
-  mutable LastValuePointData point_data_;
+  LastValuePointData point_data_;
 };
 
 }  // namespace metrics

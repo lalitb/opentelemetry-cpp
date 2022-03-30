@@ -34,7 +34,7 @@ public:
    * Collect the metrics from SDK.
    * @return return the status of the operation.
    */
-  bool Collect(nostd::function_ref<bool(MetricData)> callback) noexcept;
+  bool Collect(nostd::function_ref<bool(MetricData &&, const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary &, const opentelemetry::sdk::resource::Resource &resource)> callback) noexcept;
 
   AggregationTemporality GetAggregationTemporality() const noexcept;
 

@@ -29,12 +29,14 @@ AggregationTemporality MetricCollector::GetAggregationTemporality() noexcept
   return metric_reader_->GetAggregationTemporality();
 }
 
-bool MetricCollector::Collect(nostd::function_ref<bool(MetricData)> callback) noexcept
+bool MetricCollector::Collect( nostd::function_ref<bool(MetricData&& , const opentelemetry::sdk::instrumentationlibrary::InstrumentationLibrary& , const opentelemetry::sdk::resource::Resource& )> callback) noexcept
 {
   for (auto &meter : meter_context_->GetMeters())
   {
     auto collection_ts = std::chrono::system_clock::now();
-    meter->Collect(this, collection_ts, callback);
+    meter->Collect(this, collection_ts, [&](MetricData &&metric_data){
+      return callback(std::move(metric_data), meter->GetInstrumentationLibrary(), meter_context_->GetResource());
+    });
   }
   return true;
 }
