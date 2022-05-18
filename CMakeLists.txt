@@ -10,6 +10,10 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
   cmake_policy(SET CMP0074 NEW)
 endif()
 
+if(${CMAKE_VERSION} VERSION_LESS "3.10")
+  include(cmake/gtest.cmake)
+endif()
+
 project(opentelemetry-cpp)
 
 # Mark variables as used so cmake doesn't complain about them
