@@ -145,6 +145,38 @@ cc_test(
 )
 
 cc_test(
+    name = "in_memory_metric_reader_test",
+    srcs = [
+        "in_memory_metric_reader_test.cc",
+    ],
+    tags = [
+        "metrics",
+        "test",
+    ],
+    deps = [
+        "//sdk/src/metrics",
+        "//sdk/src/resource",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "periodic_exporting_metric_reader_test",
+    srcs = [
+        "periodic_exporting_metric_reader_test.cc",
+    ],
+    tags = [
+        "metrics",
+        "test",
+    ],
+    deps = [
+        "//sdk/src/metrics",
+        "//sdk/src/resource",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "attributes_processor_test",
     srcs = [
         "attributes_processor_test.cc",
