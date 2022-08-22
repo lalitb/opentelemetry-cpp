@@ -98,13 +98,6 @@ public:
   void SetInstrumentationScope(const opentelemetry::sdk::instrumentationscope::InstrumentationScope
                                    &instrumentation_scope) noexcept override;
 
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationLibrary()
-      const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
   /** Returns the associated instruementation scope */
   const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationScope()
       const noexcept;

@@ -213,14 +213,6 @@ public:
   }
 
   /** Returns the associated instruementation library */
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationLibrary()
-      const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
-  /** Returns the associated instruementation library */
   const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationScope()
       const noexcept
   {

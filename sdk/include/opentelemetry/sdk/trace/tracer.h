@@ -54,12 +54,6 @@ public:
     return *instrumentation_scope_;
   }
 
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const InstrumentationScope &GetInstrumentationLibrary() const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
   /** Returns the currently configured resource **/
   const opentelemetry::sdk::resource::Resource &GetResource() { return context_->GetResource(); }
 

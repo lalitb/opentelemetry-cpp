@@ -62,13 +62,6 @@ public:
   const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationScope()
       const noexcept;
 
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationLibrary()
-      const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
 private:
   // The name of this logger
   std::string logger_name_;

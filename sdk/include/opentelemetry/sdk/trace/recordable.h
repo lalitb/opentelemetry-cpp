@@ -155,12 +155,6 @@ public:
    */
   virtual void SetInstrumentationScope(
       const InstrumentationScope &instrumentation_scope) noexcept = 0;
-
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use SetInstrumentationScope instead")
-  void SetInstrumentationLibrary(const InstrumentationScope &instrumentation_scope) noexcept
-  {
-    SetInstrumentationScope(instrumentation_scope);
-  }
 };
 }  // namespace trace
 }  // namespace sdk

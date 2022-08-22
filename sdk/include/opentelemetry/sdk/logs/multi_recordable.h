@@ -91,13 +91,6 @@ public:
   const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationScope()
       const noexcept;
 
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const opentelemetry::sdk::instrumentationscope::InstrumentationScope &GetInstrumentationLibrary()
-      const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
 private:
   std::unordered_map<std::size_t, std::unique_ptr<Recordable>> recordables_;
   const opentelemetry::sdk::instrumentationscope::InstrumentationScope *instrumentation_scope_ =

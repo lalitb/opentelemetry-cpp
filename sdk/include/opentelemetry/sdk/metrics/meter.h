@@ -97,12 +97,6 @@ public:
   /** Returns the associated instrumentation scope */
   const sdk::instrumentationscope::InstrumentationScope *GetInstrumentationScope() const noexcept;
 
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const sdk::instrumentationscope::InstrumentationScope *GetInstrumentationLibrary() const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
   /** collect metrics across all the instruments configured for the meter **/
   std::vector<MetricData> Collect(CollectorHandle *collector,
                                   opentelemetry::common::SystemTimestamp collect_ts) noexcept;

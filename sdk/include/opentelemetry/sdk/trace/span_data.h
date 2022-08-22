@@ -185,12 +185,6 @@ public:
     return *instrumentation_scope_;
   }
 
-  OPENTELEMETRY_DEPRECATED_MESSAGE("Please use GetInstrumentationScope instead")
-  const opentelemetry::sdk::trace::InstrumentationScope &GetInstrumentationLibrary() const noexcept
-  {
-    return GetInstrumentationScope();
-  }
-
   /**
    * Get the start time for this span
    * @return the start time for this span
