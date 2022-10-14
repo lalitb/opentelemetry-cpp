@@ -31,7 +31,6 @@ ViewRegistry *MeterContext::GetViewRegistry() const noexcept
 
 nostd::span<std::shared_ptr<Meter>> MeterContext::GetMeters() noexcept
 {
-  std::lock_guard<opentelemetry::common::SpinLockMutex> guard(storage_lock_);
   return nostd::span<std::shared_ptr<Meter>>{meters_};
 }
 
@@ -60,16 +59,15 @@ void MeterContext::AddView(std::unique_ptr<InstrumentSelector> instrument_select
 
 void MeterContext::AddMeter(std::shared_ptr<Meter> meter)
 {
-  std::lock_guard<opentelemetry::common::SpinLockMutex> guard(storage_lock_);
   meters_.push_back(meter);
 }
 
 bool MeterContext::Shutdown() noexcept
 {
   bool result = true;
+  // Shutdown only once.
   if (!shutdown_latch_.test_and_set(std::memory_order_acquire))
   {
-
     for (auto &collector : collectors_)
     {
       bool status = std::static_pointer_cast<MetricCollector>(collector)->Shutdown();
@@ -80,6 +78,10 @@ bool MeterContext::Shutdown() noexcept
       OTEL_INTERNAL_LOG_WARN("[MeterContext::Shutdown] Unable to shutdown all metric readers");
     }
   }
+  else
+  {
+    OTEL_INTERNAL_LOG_WARN("[MeterContext::Shutdown] Shutdown already in progress.");
+  }
   return result;
 }
 
@@ -87,18 +89,16 @@ bool MeterContext::ForceFlush(std::chrono::microseconds timeout) noexcept
 {
   // TODO - Implement timeout logic.
   bool result = true;
-  if (!shutdown_latch_.test_and_set(std::memory_order_acquire))
+  // Simultaneous flush not allowed.
+  const std::lock_guard<opentelemetry::common::SpinLockMutex> locked(forceflush_lock_);
+  for (auto &collector : collectors_)
   {
-
-    for (auto &collector : collectors_)
-    {
-      bool status = std::static_pointer_cast<MetricCollector>(collector)->ForceFlush(timeout);
-      result      = result && status;
-    }
-    if (!result)
-    {
-      OTEL_INTERNAL_LOG_WARN("[MeterContext::ForceFlush] Unable to ForceFlush all metric readers");
-    }
+    bool status = std::static_pointer_cast<MetricCollector>(collector)->ForceFlush(timeout);
+    result      = result && status;
+  }
+  if (!result)
+  {
+    OTEL_INTERNAL_LOG_WARN("[MeterContext::ForceFlush] Unable to ForceFlush all metric readers");
   }
   return result;
 }
