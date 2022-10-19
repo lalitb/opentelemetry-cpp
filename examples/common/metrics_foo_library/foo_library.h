@@ -4,8 +4,7 @@
 #pragma once
 #ifndef ENABLE_METRICS_PREVIEW
 #  include <string>
-#include "opentelemetry/nostd/shared_ptr.h"
-
+#  include "opentelemetry/nostd/shared_ptr.h"
 
 class foo_library
 {

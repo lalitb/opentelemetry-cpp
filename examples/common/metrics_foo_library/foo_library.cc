@@ -15,7 +15,9 @@
 namespace nostd       = opentelemetry::nostd;
 namespace metrics_api = opentelemetry::metrics;
 
-nostd::shared_ptr<opentelemetry::metrics::ObservableInstrument> observable_counter;
+static opentelemetry::nostd::shared_ptr<opentelemetry::metrics::ObservableInstrument>
+    observable_counter;
+
 namespace
 {
 
@@ -59,7 +61,7 @@ void foo_library::counter_example(const std::string &name)
   nostd::shared_ptr<metrics_api::Meter> meter = provider->GetMeter(name, "1.2.0");
   auto double_counter                         = meter->CreateDoubleCounter(counter_name);
 
-  for(int i = 0 ; i < 20; i++)
+  for (int i = 0; i < 20; i++)
   {
     double val = (rand() % 700) + 1.1;
     double_counter->Add(val);
@@ -72,7 +74,7 @@ void foo_library::observable_counter_example(const std::string &name)
   std::string counter_name                    = name + "_observable_counter";
   auto provider                               = metrics_api::Provider::GetMeterProvider();
   nostd::shared_ptr<metrics_api::Meter> meter = provider->GetMeter(name, "1.2.0");
-  observable_counter                                = meter->CreateDoubleObservableCounter(counter_name);
+  observable_counter                          = meter->CreateDoubleObservableCounter(counter_name);
   observable_counter->AddCallback(MeasurementFetcher::Fetcher, nullptr);
 }
 
@@ -83,7 +85,7 @@ void foo_library::histogram_example(const std::string &name)
   nostd::shared_ptr<metrics_api::Meter> meter = provider->GetMeter(name, "1.2.0");
   auto histogram_counter = meter->CreateDoubleHistogram(histogram_name, "des", "unit");
   auto context           = opentelemetry::context::Context{};
-  for(int i = 0 ; i < 20; i++)
+  for (int i = 0; i < 20; i++)
   {
     double val                                = (rand() % 700) + 1.1;
     std::map<std::string, std::string> labels = get_random_attr();
