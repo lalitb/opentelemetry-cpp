@@ -15,6 +15,7 @@
 namespace nostd       = opentelemetry::nostd;
 namespace metrics_api = opentelemetry::metrics;
 
+nostd::shared_ptr<opentelemetry::metrics::ObservableInstrument> observable_counter;
 namespace
 {
 
@@ -71,12 +72,8 @@ void foo_library::observable_counter_example(const std::string &name)
   std::string counter_name                    = name + "_observable_counter";
   auto provider                               = metrics_api::Provider::GetMeterProvider();
   nostd::shared_ptr<metrics_api::Meter> meter = provider->GetMeter(name, "1.2.0");
-  auto counter                                = meter->CreateDoubleObservableCounter(counter_name);
-  counter->AddCallback(MeasurementFetcher::Fetcher, nullptr);
-  for(int i = 0 ; i < 20; i++)
-  {
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  }
+  observable_counter                                = meter->CreateDoubleObservableCounter(counter_name);
+  observable_counter->AddCallback(MeasurementFetcher::Fetcher, nullptr);
 }
 
 void foo_library::histogram_example(const std::string &name)
