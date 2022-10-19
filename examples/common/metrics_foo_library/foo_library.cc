@@ -37,8 +37,6 @@ class MeasurementFetcher
 public:
   static void Fetcher(opentelemetry::metrics::ObserverResult observer_result, void * /* state */)
   {
-    std::map<std::string, std::string> labels = get_random_attr();
-    auto labelkv = opentelemetry::common::KeyValueIterableView<decltype(labels)>{labels};
     if (nostd::holds_alternative<
             nostd::shared_ptr<opentelemetry::metrics::ObserverResultT<double>>>(observer_result))
     {
