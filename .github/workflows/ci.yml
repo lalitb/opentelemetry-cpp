@@ -170,7 +170,7 @@ jobs:
     - name: Mount Bazel Cache
       uses: actions/cache@v3
       env:
-        cache-name: bazel_cache
+        cache-name: cmake_cache
       with:
         path: /home/runner/.cache/grpc
         key: grpc_test
