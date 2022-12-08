@@ -22,6 +22,7 @@
 #include <string>
 #include <unordered_map>
 
+// forward declare google::protobuf::Message
 namespace google
 {
 namespace protobuf

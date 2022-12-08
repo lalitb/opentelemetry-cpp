@@ -7,6 +7,7 @@
 
 #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_options.h"
 
+// forward declare grpc::Channel, grpc::ClientContext
 namespace grpc
 {
 class Channel;
