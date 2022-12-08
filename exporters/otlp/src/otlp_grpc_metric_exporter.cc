@@ -4,6 +4,7 @@
 #include <memory>
 #include <mutex>
 
+#include <grpcpp/grpcpp.h>
 #include "opentelemetry/exporters/otlp/otlp_grpc_client.h"
 #include "opentelemetry/exporters/otlp/otlp_grpc_metric_exporter.h"
 #include "opentelemetry/exporters/otlp/otlp_metric_utils.h"

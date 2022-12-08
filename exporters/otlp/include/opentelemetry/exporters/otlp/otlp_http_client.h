@@ -3,12 +3,6 @@
 
 #pragma once
 
-#include "opentelemetry/exporters/otlp/protobuf_include_prefix.h"
-
-#include "google/protobuf/message.h"
-
-#include "opentelemetry/exporters/otlp/protobuf_include_suffix.h"
-
 #include "opentelemetry/common/spin_lock_mutex.h"
 #include "opentelemetry/ext/http/client/http_client.h"
 #include "opentelemetry/nostd/variant.h"
@@ -27,6 +21,14 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+
+namespace google
+{
+namespace protobuf
+{
+class Message;
+}
+}  // namespace google
 
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace exporter

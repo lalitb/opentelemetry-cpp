@@ -3,11 +3,15 @@
 
 #pragma once
 
-#include <grpcpp/grpcpp.h>
-
 #include <memory>
 
 #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_options.h"
+
+namespace grpc
+{
+class Channel;
+class ClientContext;
+}  // namespace grpc
 
 OPENTELEMETRY_BEGIN_NAMESPACE
 namespace exporter

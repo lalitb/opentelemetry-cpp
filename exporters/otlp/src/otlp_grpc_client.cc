@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "opentelemetry/exporters/otlp/otlp_grpc_client.h"
+#include <grpcpp/grpcpp.h>
 
 #if defined(HAVE_GSL)
 #  include <gsl/gsl>
