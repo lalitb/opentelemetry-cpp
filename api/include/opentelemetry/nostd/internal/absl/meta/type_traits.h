@@ -172,7 +172,7 @@ using IsMoveAssignableImpl = decltype(std::declval<T&>() = std::declval<T&&>());
 
 // MSVC 19.20 has a regression that causes our workarounds to fail, but their
 // std forms now appear to be compliant.
-#if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER >= 1920)
+#if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER >= 1910)
 
 template <typename T>
 using is_copy_assignable = std::is_copy_assignable<T>;
