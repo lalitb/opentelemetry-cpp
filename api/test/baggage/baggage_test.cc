@@ -8,6 +8,9 @@
 #include <vector>
 
 #include "opentelemetry/baggage/baggage.h"
+#include "opentelemetry/baggage/baggage_context.h"
+#include "opentelemetry/context/context.h"
+#include "opentelemetry/context/runtime_context.h"
 
 using namespace opentelemetry;
 using namespace opentelemetry::baggage;
@@ -215,4 +218,30 @@ TEST(BaggageTest, BaggageGetAll)
         index++;
         return true;
       });
+}
+
+TEST(BaggageContexTest, BasicTests)
+{
+  std::string baggage_header = "k1=v1,k2=v2,k3=v3";
+  auto baggage               = Baggage::FromHeader(baggage_header);
+  auto new_baggage = baggage->Set("Key1", "value1");
+
+  //get current context, and set baggage. this will give a new context.
+  auto context = context::RuntimeContext::GetCurrent();
+  context = SetBaggage(context, new_baggage);
+
+  // make the new context current
+  auto token = context::RuntimeContext::Attach(context);
+
+  //get the current context and extract baggage
+  auto current_context = context::RuntimeContext::GetCurrent();
+  baggage = GetBaggage(current_context);
+
+   // validate values
+  std::string value;
+  baggage->GetValue("Key1", value);
+  EXPECT_EQ(value, "value1");
+  baggage->GetValue("k1", value);
+  EXPECT_EQ(value, "v1");
+ 
 }
