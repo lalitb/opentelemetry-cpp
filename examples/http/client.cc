@@ -4,6 +4,13 @@
 #include "opentelemetry/ext/http/client/http_client_factory.h"
 #include "opentelemetry/ext/http/common/url_parser.h"
 #include "opentelemetry/trace/semantic_conventions.h"
+
+#include "opentelemetry/baggage/baggage.h"
+#include "opentelemetry/baggage/baggage_context.h"
+#include "opentelemetry/context/context.h"
+#include "opentelemetry/context/runtime_context.h"
+#include "opentelemetry/baggage/propagation/baggage_propagator.h"
+
 #include "tracer_common.h"
 
 namespace
@@ -13,6 +20,8 @@ using namespace opentelemetry::trace;
 namespace http_client = opentelemetry::ext::http::client;
 namespace context     = opentelemetry::context;
 namespace nostd       = opentelemetry::nostd;
+namespace baggage = opentelemetry::baggage;
+
 
 void sendRequest(const std::string &url)
 {
@@ -34,9 +43,20 @@ void sendRequest(const std::string &url)
 
   // inject current context into http header
   auto current_ctx = context::RuntimeContext::GetCurrent();
+
   HttpTextMapCarrier<http_client::Headers> carrier;
   auto prop = context::propagation::GlobalTextMapPropagator::GetGlobalPropagator();
   prop->Inject(carrier, current_ctx);
+
+
+ //set dummy baggage entries
+  std::string baggage_header = "k1=v1,k2=v2,k3=v3";
+  auto baggage               = baggage::Baggage::FromHeader(baggage_header);
+  baggage = baggage->Set("Key1", "value1");
+  current_ctx = SetBaggage(current_ctx, baggage);
+  auto unused = context::RuntimeContext::Attach(current_ctx); //optional
+  baggage::propagation::BaggagePropagator baggage_propagator;
+  baggage_propagator.Inject(carrier, current_ctx);
 
   // send http request
   http_client::Result result = http_client->Get(url, carrier.headers_);

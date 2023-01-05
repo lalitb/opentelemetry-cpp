@@ -12,6 +12,7 @@
 #include "opentelemetry/context/propagation/global_propagator.h"
 #include "opentelemetry/context/propagation/text_map_propagator.h"
 #include "opentelemetry/trace/propagation/http_trace_context.h"
+#include "opentelemetry/baggage/baggage_context.h"
 
 #include <cstring>
 #include <iostream>
@@ -41,6 +42,9 @@ public:
     else if (key == opentelemetry::trace::propagation::kTraceState)
     {
       key_to_compare = "Tracestate";
+    } else if (key == opentelemetry::baggage::kBaggageHeader)
+    {
+      key_to_compare = "Baggage";
     }
     auto it = headers_.find(key_to_compare);
     if (it != headers_.end())
