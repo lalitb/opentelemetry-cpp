@@ -33,6 +33,13 @@ public:
   bool is_monotonic_ = true;
 };
 
+class SumPointDataShared
+{
+  public:
+    bool is_monotonic_ = true;
+
+};
+
 class LastValuePointData
 {
 public:
@@ -45,6 +52,11 @@ public:
   ValueType value_                                  = {};
   bool is_lastvalue_valid_                          = {};
   opentelemetry::common::SystemTimestamp sample_ts_ = {};
+};
+
+class LastValuePointDataConfig
+{
+  // empty
 };
 
 class HistogramPointData
@@ -65,6 +77,13 @@ public:
   bool record_min_max_            = true;
 };
 
+class HistogramPointDataConfig
+{
+  HistogramPointDataConfig(std::vector<double> &boundaries) : boundaries_(boundaries) {}
+  public:
+    std::vector<double> boundaries_ = {};
+};
+
 class DropPointData
 {
 public:
@@ -73,6 +92,11 @@ public:
   DropPointData(const DropPointData &) = default;
   DropPointData()                      = default;
   DropPointData &operator=(DropPointData &&) = default;
+};
+
+class DropPointDataConfig
+{
+  // empty
 };
 
 }  // namespace metrics

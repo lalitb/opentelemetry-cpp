@@ -14,6 +14,7 @@
 
 #include "opentelemetry/sdk/metrics/state/temporal_metric_storage.h"
 #include "opentelemetry/sdk/metrics/view/attributes_processor.h"
+#include "opentelemetry/sdk/metrics/data/metric_data.h"
 
 #include <list>
 #include <memory>
@@ -39,7 +40,8 @@ public:
 #ifdef ENABLE_METRICS_EXEMPLAR_PREVIEW
         exemplar_reservoir_(exemplar_reservoir),
 #endif
-        temporal_metric_storage_(instrument_descriptor, aggregation_type, aggregation_config)
+        temporal_metric_storage_(instrument_descriptor, aggregation_type, aggregation_config),
+        point_data_shared_{nullptr}
 
   {
     create_default_aggregation_ = [&, aggregation_type,
@@ -47,6 +49,9 @@ public:
       return DefaultAggregation::CreateAggregation(aggregation_type, instrument_descriptor_,
                                                    aggregation_config);
     };
+
+    point_data_shared_ = DefaultAggregation::CreatePointDataShared(aggregation_type, instrument_descriptor, aggregation_config);
+    
   }
 
   void RecordLong(int64_t value,
@@ -130,6 +135,8 @@ private:
 
   // hashmap to maintain the metrics for delta collection (i.e, collection since last Collect call)
   std::unique_ptr<AttributesHashMap> attributes_hashmap_;
+  std::unique_ptr<PointTypeShared> point_data_shared_;
+
   // unreported metrics stash for all the collectors
   std::unordered_map<CollectorHandle *, std::list<std::shared_ptr<AttributesHashMap>>>
       unreported_metrics_;

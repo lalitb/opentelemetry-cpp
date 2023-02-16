@@ -20,6 +20,8 @@ namespace metrics
 using PointAttributes = opentelemetry::sdk::common::OrderedAttributeMap;
 using PointType       = opentelemetry::nostd::
     variant<SumPointData, HistogramPointData, LastValuePointData, DropPointData>;
+using PointTypeShared       = opentelemetry::nostd::
+    variant<SumPointDataShared, HistogramPointDataShared, LastValuePointDataShared, DropPointDataShared>;
 
 struct PointDataAttributes
 {
@@ -35,6 +37,7 @@ public:
   opentelemetry::common::SystemTimestamp start_ts;
   opentelemetry::common::SystemTimestamp end_ts;
   std::vector<PointDataAttributes> point_data_attr_;
+  PointTypeShared *point_data_shared_;
 };
 
 }  // namespace metrics
