@@ -78,6 +78,7 @@ public:
                                           std::chrono::system_clock::now());
 #endif
     auto attr = attributes_processor_->process(attributes);
+    // opentelemetry::sdk::metrics::MetricAttributes attr;
     std::lock_guard<opentelemetry::common::SpinLockMutex> guard(attribute_hashmap_lock_);
     attributes_hashmap_->GetOrSetDefault(attr, create_default_aggregation_)->Aggregate(value);
   }
