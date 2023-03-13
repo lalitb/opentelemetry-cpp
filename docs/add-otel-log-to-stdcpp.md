@@ -10,7 +10,7 @@ The design is based on opentelemetry-cpp Logs APIs which is an extensible soluti
 
 ## Log APIs
 
-Here is list of p
+Here is the list of the proposed functions.
 
 ```cpp
 
