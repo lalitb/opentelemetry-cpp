@@ -27,22 +27,22 @@ void set_default_logger(std::shared_ptr<std::logger> default_logger);
 template <typename... ArgumentType>
 void log(ArgumentType &&... args) noexcept;
 
-template <class... ArgumentType>
+template <typename... ArgumentType>
 void trace(ArgumentType &&... args) noexcept;
 
-template <class... ArgumentType>
+template <typename... ArgumentType>
 void debug(ArgumentType &&... args) noexcept;
 
-template <class... ArgumentType>
+template <typename... ArgumentType>
 void info(ArgumentType &&... args) noexcept;
 
-template <class... ArgumentType>
+template <typename... ArgumentType>
 void warn(ArgumentType &&... args) noexcept;
 
-template <class... ArgumentType>
+template <typename... ArgumentType>
 void error(ArgumentType &&... args) noexcept;
 
-template <class... ArgumentType>
+template <typename... ArgumentType>
 void fatal(ArgumentType &&... args) noexcept;
 
 }
