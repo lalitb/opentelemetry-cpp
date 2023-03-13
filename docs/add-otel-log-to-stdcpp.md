@@ -49,7 +49,7 @@ void fatal(ArgumentType &&... args) noexcept;
 
 ```
 
-## Log code example
+## Expected Log Code Sample
 
 ```cpp
 
@@ -78,7 +78,7 @@ int main()
 
 ```
 
-## Significant changes to reivew
+## Significant Changes to Reivew
 
 ## Wording
 
