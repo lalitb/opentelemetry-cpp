@@ -49,7 +49,7 @@ void fatal(ArgumentType &&... args) noexcept;
 
 ```
 
-## Log sample
+## Log code example
 
 ```cpp
 
@@ -59,11 +59,19 @@ void fatal(ArgumentType &&... args) noexcept;
 int main()
 {
     // log with default_logger();
-    log::info("Hello std::log");
+    std::log::info("Hello std::log");
 
-    log::warn("Hello std::log", {{"key1": 1}, {"key2": 2}});
+    std::log::warn("Hello std::log", {{"key1": 1}, {"key2": 2}});
 
-    log::error("Error occurred", {{"error_code", 3}});
+    // create a new logger.
+    std::shared_ptr<logger> new_logger = ...;
+    std::log::set_default_logger(new_logger);
+
+    // log to the new logger which defines where the log should be exported.
+    std::log::error("Error occurred", {{"error_code", 3}});
+
+    // reset to the default logger.
+    std::log::set_default_logger(nullptr);
 
     return 0;
 }
