@@ -25,7 +25,7 @@ std::shared_ptr<std::logger> default_logger();
 void set_default_logger(std::shared_ptr<std::logger> default_logger);
 
 template <typename... ArgumentType>
-void log(ArgumentType &&... args) noexcept;
+void log(Severity severity, ArgumentType &&... args) noexcept;
 
 template <typename... ArgumentType>
 void trace(ArgumentType &&... args) noexcept;
@@ -44,6 +44,8 @@ void error(ArgumentType &&... args) noexcept;
 
 template <typename... ArgumentType>
 void fatal(ArgumentType &&... args) noexcept;
+
+void set_severity(Severity severity);
 
 }
 
