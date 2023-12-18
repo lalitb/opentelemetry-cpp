@@ -16,5 +16,6 @@ if(DEFINED OPENTELEMETRY_BUILD_DLL)
 else()
   target_link_libraries(
     metrics_ostream_example opentelemetry_metrics
+    opentelemetry_exporter_in_memory_metric
     opentelemetry_exporter_ostream_metrics opentelemetry_resources)
 endif()

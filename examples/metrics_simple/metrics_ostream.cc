@@ -17,6 +17,9 @@
 #include "opentelemetry/sdk/metrics/view/meter_selector_factory.h"
 #include "opentelemetry/sdk/metrics/view/view_factory.h"
 
+#include "opentelemetry/exporters/memory/in_memory_metric_exporter.h"
+#include "opentelemetry/exporters/memory/in_memory_metric_exporter_factory.h"
+
 #ifdef BAZEL_BUILD
 #  include "examples/common/metrics_foo_library/foo_library.h"
 #else
@@ -31,16 +34,18 @@ namespace metrics_api     = opentelemetry::metrics;
 namespace
 {
 
-void InitMetrics(const std::string &name)
+std::shared_ptr<InMemoryMetricData> InitMetrics(const std::string &name)
 {
-  auto exporter = exportermetrics::OStreamMetricExporterFactory::Create();
+  std::shared_ptr<InMemoryMetricData> data;
+  auto exporter = InMemoryMetricExporterFactory::Create(data); 
+  //auto exporter = exportermetrics::OStreamMetricExporterFactory::Create();
 
   std::string version{"1.2.0"};
   std::string schema{"https://opentelemetry.io/schemas/1.2.0"};
 
   // Initialize and set the global MeterProvider
   metrics_sdk::PeriodicExportingMetricReaderOptions options;
-  options.export_interval_millis = std::chrono::milliseconds(1000);
+  options.export_interval_millis = std::chrono::milliseconds(600000);
   options.export_timeout_millis  = std::chrono::milliseconds(500);
 
   auto reader =
@@ -105,6 +110,7 @@ void InitMetrics(const std::string &name)
 
   std::shared_ptr<opentelemetry::metrics::MeterProvider> provider(std::move(u_provider));
   metrics_api::Provider::SetMeterProvider(provider);
+  return data;
 }
 
 void CleanupMetrics()
@@ -123,7 +129,7 @@ int main(int argc, char **argv)
   }
 
   std::string name{"ostream_metric_example"};
-  InitMetrics(name);
+  auto data = InitMetrics(name);
 
   if (example_type == "counter")
   {
@@ -147,6 +153,12 @@ int main(int argc, char **argv)
     observable_counter_example.join();
     histogram_example.join();
   }
+  auto provider = metrics_api::Provider::GetMeterProvider();
+  //forceflush provider by typecasting to sdk provider
+  auto *p = static_cast<metrics_sdk::MeterProvider *>(provider.get());
+  assert(data->size() == 0);
+  p->ForceFlush();
+  assert(data->size() == 1);
 
   CleanupMetrics();
 }

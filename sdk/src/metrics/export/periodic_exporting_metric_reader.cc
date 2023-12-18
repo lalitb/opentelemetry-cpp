@@ -4,7 +4,7 @@
 #include "opentelemetry/sdk/metrics/export/periodic_exporting_metric_reader.h"
 #include "opentelemetry/sdk/common/global_log_handler.h"
 #include "opentelemetry/sdk/metrics/push_metric_exporter.h"
-
+#include <iostream>
 #include <chrono>
 #if defined(_MSC_VER)
 #  pragma warning(suppress : 5204)
@@ -110,6 +110,7 @@ bool PeriodicExportingMetricReader::CollectAndExportOnce()
 
 bool PeriodicExportingMetricReader::OnForceFlush(std::chrono::microseconds timeout) noexcept
 {
+  std::cout << "Force flush called" << std::endl;
   std::unique_lock<std::mutex> lk_cv(force_flush_m_);
   is_force_flush_pending_.store(true, std::memory_order_release);
   auto break_condition = [this]() {
