@@ -52,7 +52,7 @@ bool TemporalMetricStorage::buildMetrics(CollectorHandle *collector,
   AggregationTemporality aggregation_temporarily =
       collector->GetAggregationTemporality(instrument_descriptor_.type_);
 // Fast path for single collector with delta temporality
-    if (collectors.size() == 1 && 
+    if (collectors.size() == 1 &&
         collector->GetAggregationTemporality(instrument_descriptor_.type_) == AggregationTemporality::kDelta)
     {
         // If no metrics, early return
