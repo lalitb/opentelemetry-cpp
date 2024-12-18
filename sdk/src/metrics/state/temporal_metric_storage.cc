@@ -9,7 +9,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <iostream>
 
 #include "opentelemetry/common/spin_lock_mutex.h"
 #include "opentelemetry/common/timestamp.h"
@@ -61,7 +60,6 @@ bool TemporalMetricStorage::buildMetrics(CollectorHandle *collector,
         {
             return true;
         }
-        std::cout << "Single collector with delta temporality\n";
 
         // Create MetricData directly
         MetricData metric_data;
