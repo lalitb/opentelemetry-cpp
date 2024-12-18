@@ -83,15 +83,9 @@ void CleanupMetrics()
   metrics_api::Provider::SetMeterProvider(none);
 }
 
-void CounterExample(opentelemetry::nostd::shared_ptr<metrics_api::Meter> meter)
+void CounterExample(opentelemetry::nostd::unique_ptr<metrics_api::Counter<double>>& counter)
 {
-  auto counter = meter->CreateDoubleCounter("metrics_stress_test_counter");
-
-  for (int i = 0; i < 20; ++i)
-  {
-    counter->Add(1.0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  }
+   counter->Add(1.0);
 }
 
 }  // namespace
@@ -101,8 +95,9 @@ int main(int argc, char *argv[])
   InitMetrics("metrics_stress_test");
   auto provider = metrics_api::Provider::GetMeterProvider();
   auto meter    = provider->GetMeter("metrics_stress_test", "1.0.0");
+  auto counter = meter->CreateDoubleCounter("metrics_stress_test_counter");
 
-  auto func = [&meter]() { CounterExample(meter); };
+  auto func = [&counter]() { CounterExample(counter); };
 
   StressTest test(func, std::thread::hardware_concurrency());
 
