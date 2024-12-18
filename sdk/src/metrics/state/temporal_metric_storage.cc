@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include "opentelemetry/common/spin_lock_mutex.h"
 #include "opentelemetry/common/timestamp.h"
@@ -51,6 +52,37 @@ bool TemporalMetricStorage::buildMetrics(CollectorHandle *collector,
   opentelemetry::common::SystemTimestamp last_collection_ts = sdk_start_ts;
   AggregationTemporality aggregation_temporarily =
       collector->GetAggregationTemporality(instrument_descriptor_.type_);
+// Fast path for single collector with delta temporality
+std::cout << "------->> Size of collectors:"<< collectors.size() << std::endl;
+    if (collectors.size() == 1 && 
+        collector->GetAggregationTemporality(instrument_descriptor_.type_) == AggregationTemporality::kDelta)
+    {
+        // If no metrics, early return
+        if (delta_metrics->Size() == 0)
+        {
+            return true;
+        }
+        std::cout << "Single collector with delta temporality\n";
+
+        // Create MetricData directly
+        MetricData metric_data;
+        metric_data.instrument_descriptor = instrument_descriptor_;
+        metric_data.aggregation_temporality = AggregationTemporality::kDelta;
+        metric_data.start_ts = sdk_start_ts;
+        metric_data.end_ts = collection_ts;
+
+        // Direct conversion of delta metrics to point data
+        delta_metrics->GetAllEnteries(
+            [&metric_data](const MetricAttributes &attributes, Aggregation &aggregation) {
+                PointDataAttributes point_data_attr;
+                point_data_attr.point_data = aggregation.ToPoint();
+                point_data_attr.attributes = attributes;
+                metric_data.point_data_attr_.emplace_back(std::move(point_data_attr));
+                return true;
+            });
+
+        return callback(metric_data);
+    }
 
   if (delta_metrics->Size())
   {
