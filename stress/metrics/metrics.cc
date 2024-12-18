@@ -62,16 +62,16 @@ public:
 // Pre-generate random attributes
 std::vector<std::map<std::string, uint32_t>> GenerateAttributeSet(size_t count)
 {
-    std::vector<std::map<std::string, uint32_t>> attributes_set;
-    for (size_t i = 0; i < count; ++i)
-    {
-        std::map<std::string, uint32_t> attributes;
-        attributes["dim1"] = rand() % 100; // Random value between 0 and 99
-        attributes["dim2"] = rand() % 100; // Random value between 0 and 99
-        attributes["dim3"] = rand() % 100; // Random value between 0 and 99
-        attributes_set.push_back(attributes);
-    }
-    return attributes_set;
+  std::vector<std::map<std::string, uint32_t>> attributes_set;
+  for (size_t i = 0; i < count; ++i)
+  {
+    std::map<std::string, uint32_t> attributes;
+    attributes["dim1"] = rand() % 100;  // Random value between 0 and 99
+    attributes["dim2"] = rand() % 100;  // Random value between 0 and 99
+    attributes["dim3"] = rand() % 100;  // Random value between 0 and 99
+    attributes_set.push_back(attributes);
+  }
+  return attributes_set;
 }
 
 void InitMetrics(const std::string &name)
@@ -101,30 +101,30 @@ void CleanupMetrics()
 void CounterExample(opentelemetry::nostd::unique_ptr<metrics_api::Counter<double>> &counter,
                     const std::vector<std::map<std::string, uint32_t>> &attributes_set)
 {
-    // Pick a random attribute set
-    size_t random_index = rand() % attributes_set.size();
-    const auto &attributes = attributes_set[random_index];
-    
-    // Record the metric with the selected attributes
-    counter->Add(1.0,
-                 opentelemetry::common::KeyValueIterableView<std::map<std::string, uint32_t>>(attributes),
-                 opentelemetry::context::Context{});
+  // Pick a random attribute set
+  size_t random_index    = rand() % attributes_set.size();
+  const auto &attributes = attributes_set[random_index];
+
+  // Record the metric with the selected attributes
+  counter->Add(
+      1.0, opentelemetry::common::KeyValueIterableView<std::map<std::string, uint32_t>>(attributes),
+      opentelemetry::context::Context{});
 }
 }  // namespace
 
 int main(int argc, char *argv[])
 {
-  std::srand(std::time(nullptr)); // Seed the random numbe
+  std::srand(std::time(nullptr));  // Seed the random numbe
   // Pre-generate a set of random attributes
-  size_t attribute_count = 1000; // Number of attribute sets to pre-generate
-  auto attributes_set = GenerateAttributeSet(attribute_count);
-  
+  size_t attribute_count = 1000;  // Number of attribute sets to pre-generate
+  auto attributes_set    = GenerateAttributeSet(attribute_count);
+
   InitMetrics("metrics_stress_test");
   auto provider = metrics_api::Provider::GetMeterProvider();
   auto meter    = provider->GetMeter("metrics_stress_test", "1.0.0");
-  auto counter = meter->CreateDoubleCounter("metrics_stress_test_counter");
+  auto counter  = meter->CreateDoubleCounter("metrics_stress_test_counter");
 
- auto func = [&counter, &attributes_set]() { CounterExample(counter, attributes_set); };
+  auto func = [&counter, &attributes_set]() { CounterExample(counter, attributes_set); };
 
   StressTest test(func, std::thread::hardware_concurrency());
 
