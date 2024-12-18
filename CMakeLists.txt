@@ -716,6 +716,8 @@ if(NOT WITH_API_ONLY)
   endif()
 endif()
 
+add_subdirectory(stress)
+
 include(cmake/opentelemetry-build-external-component.cmake)
 include(cmake/patch-imported-config.cmake)
 
