@@ -6,6 +6,7 @@ trap { $host.SetShouldExit(1) }
 
 $SRC_DIR = (Get-Item -Path ".\").FullName
 $CHECK_DIR = Join-Path "$SRC_DIR" "build/windows-deprecation-check"
+$BUILD_DIR = Join-Path "$CHECK_DIR" "build"
 
 if (Test-Path "$CHECK_DIR") {
   Remove-Item -Path "$CHECK_DIR" -Recurse -Force
@@ -59,24 +60,33 @@ Set-Content -Path (Join-Path "$CHECK_DIR" "logger_only.cpp") -Value $LOGGER_ONLY
 Set-Content -Path (Join-Path "$CHECK_DIR" "event_use.cpp") -Value $EVENT_USE
 
 Push-Location -Path "$CHECK_DIR"
+try {
+  cmake -S . -B build
+  $exit = $LASTEXITCODE
+  if ($exit -ne 0) {
+    exit $exit
+  }
 
-cmake -S . -B .
-$exit = $LASTEXITCODE
-if ($exit -ne 0) {
-  exit $exit
+  cmake --build "$BUILD_DIR" --target logger_only
+  $exit = $LASTEXITCODE
+  if ($exit -ne 0) {
+    throw "Expected logger_only target to compile without deprecation errors"
+  }
+
+  $EVENT_LOG = Join-Path "$CHECK_DIR" "event_use_build.log"
+  cmake --build "$BUILD_DIR" --target event_use *> "$EVENT_LOG"
+  $exit = $LASTEXITCODE
+  if ($exit -eq 0) {
+    throw "Expected event_use target to fail with C4996 (/we4996), but it compiled successfully"
+  }
+
+  $event_output = Get-Content -Path "$EVENT_LOG" -Raw
+  if ($event_output -notmatch "C4996") {
+    throw "event_use failed, but not due to C4996 deprecation warning. See $EVENT_LOG"
+  }
+
+  Write-Output "Windows deprecation behavior check passed: logger-only succeeds and Event API usage fails with C4996 (/we4996)."
 }
-
-cmake --build . --target logger_only
-$exit = $LASTEXITCODE
-if ($exit -ne 0) {
-  throw "Expected logger_only target to compile without deprecation errors"
+finally {
+  Pop-Location
 }
-
-cmake --build . --target event_use
-$exit = $LASTEXITCODE
-if ($exit -eq 0) {
-  throw "Expected event_use target to fail with C4996 (/we4996), but it compiled successfully"
-}
-
-Write-Output "Windows deprecation behavior check passed: logger-only succeeds and Event API usage fails with /we4996."
-Pop-Location
