@@ -48,16 +48,6 @@ public:
   }
 
 #if OPENTELEMETRY_ABI_VERSION_NO < 2
-#  if defined(_MSC_VER)
-#    pragma warning(push)
-#    pragma warning(disable : 4996)
-#  elif defined(__GNUC__) && !defined(__clang__) && !defined(__apple_build_version__)
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#  elif defined(__clang__) || defined(__apple_build_version__)
-#    pragma clang diagnostic push
-#    pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#  endif
   /**
    * Returns the singleton EventLoggerProvider.
    *
@@ -68,6 +58,9 @@ public:
   GetEventLoggerProvider() noexcept
   {
     std::lock_guard<common::SpinLockMutex> guard(GetLock());
+#  if defined(_MSC_VER)
+#    pragma warning(suppress : 4996)
+#  endif
     return nostd::shared_ptr<EventLoggerProvider>(GetEventProvider());
   }
 
@@ -78,15 +71,11 @@ public:
       const nostd::shared_ptr<EventLoggerProvider> &tp) noexcept
   {
     std::lock_guard<common::SpinLockMutex> guard(GetLock());
+#  if defined(_MSC_VER)
+#    pragma warning(suppress : 4996)
+#  endif
     GetEventProvider() = tp;
   }
-#  if defined(_MSC_VER)
-#    pragma warning(pop)
-#  elif defined(__GNUC__) && !defined(__clang__) && !defined(__apple_build_version__)
-#    pragma GCC diagnostic pop
-#  elif defined(__clang__) || defined(__apple_build_version__)
-#    pragma clang diagnostic pop
-#  endif
 #endif
 
 private:
