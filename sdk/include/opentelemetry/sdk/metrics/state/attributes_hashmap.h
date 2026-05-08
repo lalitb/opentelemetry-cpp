@@ -26,11 +26,14 @@ namespace metrics
 using opentelemetry::sdk::common::OrderedAttributeMap;
 
 constexpr size_t kAggregationCardinalityLimit = 2000;
-const std::string kAttributesLimitOverflowKey = "otel.metric.overflow";
-const bool kAttributesLimitOverflowValue      = true;
-const MetricAttributes kOverflowAttributes    = {
-    {kAttributesLimitOverflowKey,
-        kAttributesLimitOverflowValue}};  // precalculated for optimization
+
+// Defined in attributes_hashmap.cc. Declared extern here so that the throwing
+// static initialization of std::string / MetricAttributes happens in a single
+// translation unit instead of once per TU that includes this header (see
+// clang-tidy bugprone-throwing-static-initialization).
+extern const std::string kAttributesLimitOverflowKey;
+extern const bool kAttributesLimitOverflowValue;
+extern const MetricAttributes kOverflowAttributes;  // precalculated for optimization
 
 class AttributeHashGenerator
 {

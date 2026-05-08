@@ -15,6 +15,14 @@ Increment the:
 
 ## [Unreleased]
 
+* [SDK] Move overflow attribute globals (`kAttributesLimitOverflowKey`,
+  `kAttributesLimitOverflowValue`, `kOverflowAttributes`) from
+  `attributes_hashmap.h` into a new `attributes_hashmap.cc`. The header
+  definitions caused clang-tidy
+  `bugprone-throwing-static-initialization` warnings to be replicated in
+  every TU that included the header.
+  [#4063](https://github.com/open-telemetry/opentelemetry-cpp/pull/4063)
+
 * [API] Fix `Logger::Enabled()`
   [#2667](https://github.com/open-telemetry/opentelemetry-cpp/issues/2667)
 
